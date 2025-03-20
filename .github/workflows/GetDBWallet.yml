@@ -1,5 +1,5 @@
 # This is a basic workflow to install JAVA and Get DB Wallet
-name: DBChangesSyncToTargetDBInstances
+name: GetDBWallet
 # Controls when the workflow will run
 on:
  pull_request:
