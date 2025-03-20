@@ -1,0 +1,80 @@
+# This is a basic workflow to install JAVA and Get DB Wallet
+name: DBChangesSyncToTargetDBInstances
+# Controls when the workflow will run
+on:
+ pull_request:
+    branches: [ "main" ]
+ workflow_dispatch:
+   inputs:
+      envname:
+        description: 'database env name'
+        required: true
+        type: string
+        default: dev
+      db-instance-name:
+        description: 'database instance name '
+        required: true
+        type: string
+        default: 'Thayer_Development'
+      db-instance-id:
+        description: 'database instance id '
+        required: true
+        type: string
+        default: 'ocid1.autonomousdatabase.oc1.iad.anuwcljtntxkdlyambke7vkjliaugvioqteeobnp5q7vs5x6hdp56elwczla'
+     
+
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+   installjavaandretwallet:
+    runs-on: self-hosted
+      
+     
+    
+    environment: ${{ inputs.envname }}
+    name: Integrate and execute LB through SQLcl 
+    env:
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_KEY_FILE: ${{ secrets.OCI_CLI_KEY_FILE }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+      OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
+    
+      RUNNER_TOOL_CACHE: ${{ secrets.DB_ENV_BASEDIR }}/${{ inputs.envname || 'dev' }}
+      AGENT_TOOLSDIRECTORY: ${{ secrets.DB_ENV_BASEDIR }}/${{ inputs.envname || 'dev' }}
+      DB_ENV: ${{ inputs.envname || 'dev' }}
+      DB_INST: ${{ inputs.db-instance-name || 'Thayer_Development' }}
+      DB_USER: ${{ format('DB_{0}_USER', inputs.db-instance-name || 'Thayer_Development' ) }}
+      DB_PASSWD: ${{ format('DB_{0}_PASSWD',inputs.db-instance-name || 'Thayer_Development') }}
+      DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',inputs.db-instance-name || 'Thayer_Development' ) }}
+      DB_INST_ID: ${{ inputs.db-instance-id || 'ocid1.autonomousdatabase.oc1.iad.anuwcljtntxkdlyambke7vkjliaugvioqteeobnp5q7vs5x6hdp56elwczla' }}
+      SQL_LB_CMD: ${{ inputs.sqlcl-cmd || 'lb update -changelog-file controller.xml' }}
+      PR_NUMBER: ${{ github.event.number ||  inputs.tagnametouse  || 'basev1' }}
+      
+  
+    steps:
+     
+      - name: Workspace Location
+        run: | 
+         echo $GITHUB_WORKSPACE
+         echo "DBPASSWD***"${{ env.DB_PASSWD }}
+         echo "inputs***"${{ inputs.envname }}
+         echo "github user****"${{ github.actor }}
+         echo "HOME***"$HOME
+         echo "userid***"$id
+    
+
+      - name: Get Oracle Wallet
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        id: get-wallet-id
+       
+        with:
+          command: ' oci db autonomous-database generate-wallet --autonomous-database-id ${{ env.DB_INST_ID }} --file ${{ env.DB_INST }}.zip --password ${{ secrets[env.DB_PASSWD] }} --generate-type SINGLE'
+          silent: false
+      - name : setup java
+        uses: actions/setup-java@v4
+        with:
+         distribution: 'oracle'
+         java-version: '21'
+     
