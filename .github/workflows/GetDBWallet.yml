@@ -41,19 +41,16 @@ jobs:
       OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
       OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
     
-      RUNNER_TOOL_CACHE: ${{ secrets.DB_ENV_BASEDIR }}/${{ inputs.envname || 'dev' }}
-      AGENT_TOOLSDIRECTORY: ${{ secrets.DB_ENV_BASEDIR }}/${{ inputs.envname || 'dev' }}
+   
       DB_ENV: ${{ inputs.envname || 'dev' }}
       DB_INST: ${{ inputs.db-instance-name || 'Thayer_Development' }}
-      DB_USER: ${{ format('DB_{0}_USER', inputs.db-instance-name || 'Thayer_Development' ) }}
-      DB_PASSWD: ${{ format('DB_{0}_PASSWD',inputs.db-instance-name || 'Thayer_Development') }}
+      
+      
       DB_WALLET_PASSWD: ${{ format('DB_{0}_WALLETPASSWD',inputs.db-instance-name || 'Thayer_Development') }}
       
-      DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',inputs.db-instance-name || 'Thayer_Development' ) }}
+     
       DB_INST_ID: ${{ inputs.db-instance-id || 'ocid1.autonomousdatabase.oc1.iad.anuwcljtntxkdlyambke7vkjliaugvioqteeobnp5q7vs5x6hdp56elwczla' }}
-      SQL_LB_CMD: ${{ inputs.sqlcl-cmd || 'lb update -changelog-file controller.xml' }}
-      PR_NUMBER: ${{ github.event.number ||  inputs.tagnametouse  || 'basev1' }}
-      
+     
   
     steps:
      
