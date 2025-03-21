@@ -83,8 +83,8 @@ jobs:
         run: |
           retid=$(echo ${{ steps.getcompartmentid.outputs.output }} | jq .[0])
           echo "id***"$retid
-          echo "compartmentocid=$retid" >> $GITHUB_ENV
-          echo "test=test1" >> $GITHUB_ENV
+          echo "compartmentocid=$(echo $retid)" >> $GITHUB_ENV
+          echo "test=$(echo "test1")" >> $GITHUB_ENV
          
           echo ${{ env.compartmentocid }}
           echo ${{ env.test }}
