@@ -82,13 +82,13 @@ jobs:
       - name: Display output
         run: |
           retid=$(echo ${{ steps.getcompartmentid.outputs.output }} | jq .[0])
-          echo "id***"$retid
+          
           echo "compartmentocid=$(echo $retid)" >> $GITHUB_ENV
-          echo "test=$(echo "test1")" >> $GITHUB_ENV
+        
       - name: Display output2
         run: |
           echo ${{ env.compartmentocid }}
-          echo ${{ env.test }}
+         
         
       
       #- name: Clone the DB
