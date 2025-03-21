@@ -1,0 +1,84 @@
+name: "oci db clone "
+on:
+  #push:
+    #branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+   inputs:
+      dbname:
+        description: 'database name '
+        required: true
+        default: 'dev1'
+      dbdisplayname:
+        description: 'database display name '
+        required: true
+        default: 'dev2'
+      dbclonetype:
+        type: choice
+        options:
+          - FULL
+          - METADATA
+          - PARTIAL
+        description: 'database clone type name '
+        required: true
+        default: 'FULL'
+      dbversion:
+        type: choice
+        options:
+          - 19c
+          - 23ai
+        description: 'database version   '
+        required: true
+        default: '19c'
+      dbcomputemodel:
+        type: choice
+        options:
+          - ECPU
+          - ECPU
+        description: 'database compute model  '
+        required: true
+        default: 'ECPU'
+      dbcpucount:
+       description: 'database cpu count '
+       required: true
+       default: 2
+      dbstoragesize:
+       description: 'database storage size in gb '
+       required: true
+       default: 20
+  
+jobs:
+  clonedb-instance:
+    runs-on: self-hosted
+    environment:  ${{
+         github.ref_name == 'master' && 'dev'
+         || github.ref_name == 'dev'    && 'dev'
+         || 'oracleoci'
+      }}
+    name: OCI DB CLONE
+    env:
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_KEY_FILE: ${{ secrets.OCI_CLI_KEY_FILE }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+      OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
+   
+    steps:
+       
+      - name: Clone the DB
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        id: cloneatpdb
+        with:
+          command: ' oci db autonomous-database create-from-clone --clone-type ${{ github.event.inputs.dbclonetype }} --source-id ${{ secrets.sourceID }} --compute-model ${{ github.event.inputs.dbcomputemodel }} --compute-count ${{ github.event.inputs.dbcpucount }} --data-storage-size-in-gbs ${{ github.event.inputs.dbstoragesize }} --admin-password ${{ secrets.DB_PASSWD }} --compartment-id ${{ secrets.OCI_COMPARTMENT_OCID }} --db-version ${{ github.event.inputs.dbversion }} --db-name ${{ github.event.inputs.dbname }} --display-name  ${{ github.event.inputs.dbdisplayname }}
+'
+          silent: true
+      - name: List the display name and shape of the instances in my compartment
+        run: |
+          echo ${{ steps.find-compartment-id.outputs.output }} | jq .
+          echo outputContent=${{ steps.find-compartment-id.outputs.output }} >> $env:GITHUB_OUTPUT
+          echo "Bash version: ${{ steps.find-compartment-id.outputs.outputContent }}"
+      
+
+
