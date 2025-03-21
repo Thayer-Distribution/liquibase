@@ -61,7 +61,7 @@ jobs:
          echo "inputs***"${{ inputs.envname }}
          echo "github user****"${{ github.actor }}
          echo "HOME***"${HOME}
-         echo "userid***"${id}
+         echo "userid***"${UID}
     
 
       - name: Get Oracle Wallet
