@@ -47,6 +47,11 @@ on:
        description: 'database storage size in gb '
        required: true
        default: 20
+      compartmentname:
+       description: 'compartment name to create the DB '
+       required: true
+       default: thayer_dev
+      
   
 jobs:
   clonedb-instance:
@@ -64,6 +69,7 @@ jobs:
       OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
       OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
       OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
+      OCI_COMPARTMENT_ID: 
    
     steps:
        
