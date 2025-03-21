@@ -85,7 +85,8 @@ jobs:
           echo "id***"$retid
           echo "compartmentocid=$(echo $retid)" >> $GITHUB_ENV
           echo "test=$(echo "test1")" >> $GITHUB_ENV
-         
+      - name: Display output2
+        run: |
           echo ${{ env.compartmentocid }}
           echo ${{ env.test }}
         
