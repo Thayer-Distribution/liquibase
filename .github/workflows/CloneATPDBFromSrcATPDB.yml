@@ -79,7 +79,7 @@ jobs:
           silent: true
       - name: Display output
         run: |
-          echo ${{ steps.getcompartmentid.outputs.stdout }} "
+          echo ${{ steps.getcompartmentid.outputs.stdout }} 
           echo "compartmentocid= $(echo ${{ steps.getcompartmentid.outputs.stdout }} |  jq ".data[0].id"))" >> $GITHUB_ENV
           echo "compartmentocid.."=${{ env.compartmentocid }}
           
