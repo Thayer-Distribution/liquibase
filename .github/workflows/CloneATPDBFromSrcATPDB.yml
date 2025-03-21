@@ -47,7 +47,7 @@ on:
        description: 'database storage size in gb '
        required: true
        default: 20
-      compartmentname:
+      compartment-name:
        description: 'compartment name to create the DB '
        required: true
        default: thayer_dev
@@ -69,22 +69,30 @@ jobs:
       OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
       OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
       OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
-      OCI_COMPARTMENT_ID: 
+      #OCI_COMPARTMENT_ID: ${{ format('DB_{0}_USER', inputs.db-instance-name || 'thayeratp' ) }}
+      OCI_COMPARTMENT_NAME: ${{ format('DB_{0}_USER', inputs.compartment-name || 'thayer_dev' ) }}
    
     steps:
-       
-      - name: Clone the DB
+      - name: Get Compartment ID the
         uses: oracle-actions/run-oci-cli-command@v1.3.2
-        id: cloneatpdb
+        id: getcompartmentid
         with:
-          command: ' oci db autonomous-database create-from-clone --clone-type ${{ github.event.inputs.dbclonetype }} --source-id ${{ secrets.sourceID }} --compute-model ${{ github.event.inputs.dbcomputemodel }} --compute-count ${{ github.event.inputs.dbcpucount }} --data-storage-size-in-gbs ${{ github.event.inputs.dbstoragesize }} --admin-password ${{ secrets.DB_PASSWD }} --compartment-id ${{ secrets.OCI_COMPARTMENT_OCID }} --db-version ${{ github.event.inputs.dbversion }} --db-name ${{ github.event.inputs.dbname }} --display-name  ${{ github.event.inputs.dbdisplayname }}
+          command: ' oci  iam compartment  list  --name "Innovation"  | jq ".data[0].id"
 '
           silent: true
+      - name: Display output
+        run: echo ${{ steps.getcompartmentid.outputs.stdout }} 
       - name: List the display name and shape of the instances in my compartment
         run: |
-          echo ${{ steps.find-compartment-id.outputs.output }} | jq .
-          echo outputContent=${{ steps.find-compartment-id.outputs.output }} >> $env:GITHUB_OUTPUT
-          echo "Bash version: ${{ steps.find-compartment-id.outputs.outputContent }}"
-      
-
+          echo ${{ steps.getcompartmentid.outputs.output }} | jq .
+          echo outputContent=${{ steps.getcompartmentid.outputs.output }} >> $env:GITHUB_OUTPUT
+          echo "Bash version: ${{ steps.getcompartmentid.outputs.outputContent }}
+      #- name: Clone the DB
+      #  uses: oracle-actions/run-oci-cli-command@v1.3.2
+      #  id: cloneatpdb
+      #  with:
+      #    command: ' oci db autonomous-database create-from-clone --clone-type ${{ github.event.inputs.dbclonetype }} --source-id ${{ secrets.sourceID }} --compute-model ${{ github.event.inputs.dbcomputemodel }} --compute-count ${{ github.event.inputs.dbcpucount }} --data-storage-size-in-gbs ${{ github.event.inputs.dbstoragesize }} --admin-password ${{ secrets.DB_PASSWD }} --compartment-id ${{ secrets.OCI_COMPARTMENT_OCID }} --db-version ${{ github.event.inputs.dbversion }} --db-name ${{ github.event.inputs.dbname }} --display-name  ${{ github.event.inputs.dbdisplayname }}
+'
+      #   silent: true
+     
 
