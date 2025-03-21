@@ -56,12 +56,12 @@ jobs:
      
       - name: Workspace Location
         run: | 
-         echo ${{ GITHUB_WORKSPACE }}
+         echo $GITHUB_WORKSPACE
          echo "DBPASSWD***"${{ env.DB_WALLET_PASSWD }}
          echo "inputs***"${{ inputs.envname }}
          echo "github user****"${{ github.actor }}
-         echo "HOME***"${{ HOME }}
-         echo "userid***"${{ id }}
+         echo "HOME***"${HOME}
+         echo "userid***"${id}
     
 
       - name: Get Oracle Wallet
