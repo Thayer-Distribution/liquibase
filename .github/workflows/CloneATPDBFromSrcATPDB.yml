@@ -76,7 +76,7 @@ jobs:
         id: getcompartmentid
         with:
           command: ' oci  iam compartment  list '
-          query: data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
+          query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
 
           silent: false
       - name: Display output
