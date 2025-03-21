@@ -75,7 +75,7 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getcompartmentid
         with:
-          command: ' oci  iam compartment  list --compartment-id-in-subtree=true'
+          command: ' oci  iam compartment  list '
           query: data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
 
           silent: false
