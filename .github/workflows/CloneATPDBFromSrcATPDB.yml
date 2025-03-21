@@ -75,13 +75,19 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getcompartmentid
         with:
-          command: ' oci  iam compartment  list  --name ${{ env.OCI_COMPARTMENT_NAME }}  | jq ".data[0].id" '
+          command: ' oci  iam compartment  list  --name ${{ env.OCI_COMPARTMENT_NAME }}   '
           silent: true
       - name: Display output
-        run: echo ${{ steps.getcompartmentid.outputs.stdout }} 
+        run: |
+          echo ${{ steps.getcompartmentid.outputs.stdout }} |  jq ".data[0].id"
+          echo "compartmentocid= $(echo ${{ steps.getcompartmentid.outputs.stdout }} |  jq ".data[0].id"))" >> $GITHUB_ENV
+          echo "compartmentocid.."=${{ env.compartmentocid }}
+          
+        
       - name: List the display name and shape of the instances in my compartment
         run: |
           echo ${{ steps.getcompartmentid.outputs.output }} | jq .
+          echo "compartmentocid= $(jq '.authorizationToken' at.json)" >> $GITHUB_ENV
           echo outputContent=${{ steps.getcompartmentid.outputs.output }} >> $env:GITHUB_OUTPUT
           echo "Bash version: ${{ steps.getcompartmentid.outputs.outputContent }}
       #- name: Clone the DB
