@@ -75,12 +75,14 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getcompartmentid
         with:
-          command: ' oci  iam compartment  list  --name ${{ env.OCI_COMPARTMENT_NAME }}   '
-          silent: true
+          command: ' oci  iam compartment  list --compartment-id-in-subtree=true'
+          query: data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
+
+          silent: false
       - name: Display output
         run: |
-          echo ${{ steps.getcompartmentid.outputs.stdout }} 
-          echo "compartmentocid= $(echo ${{ steps.getcompartmentid.outputs.stdout }} |  jq ".data[0].id"))" >> $GITHUB_ENV
+          echo ${{ steps.getcompartmentid.outputs.output }} 
+          echo "compartmentocid= $(echo ${{ steps.getcompartmentid.outputs.output }} |  jq ".data[0].id"))" >> $GITHUB_ENV
           echo "compartmentocid.."=${{ env.compartmentocid }}
           
         
