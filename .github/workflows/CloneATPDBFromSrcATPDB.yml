@@ -78,7 +78,6 @@ jobs:
         id: getcompartmentid
         with:
           command: ' oci  iam compartment  list  --name "Innovation"  | jq ".data[0].id"
-'
           silent: true
       - name: Display output
         run: echo ${{ steps.getcompartmentid.outputs.stdout }} 
