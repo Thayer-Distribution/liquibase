@@ -75,7 +75,7 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getcompartmentid
         with:
-          command: ' oci  iam compartment  list  --name "Innovation"  | jq ".data[0].id"
+          command: ' oci  iam compartment  list  --name "Innovation"  | jq ".data[0].id" '
           silent: true
       - name: Display output
         run: echo ${{ steps.getcompartmentid.outputs.stdout }} 
@@ -88,8 +88,8 @@ jobs:
       #  uses: oracle-actions/run-oci-cli-command@v1.3.2
       #  id: cloneatpdb
       #  with:
-      #    command: ' oci db autonomous-database create-from-clone --clone-type ${{ github.event.inputs.dbclonetype }} --source-id ${{ secrets.sourceID }} --compute-model ${{ github.event.inputs.dbcomputemodel }} --compute-count ${{ github.event.inputs.dbcpucount }} --data-storage-size-in-gbs ${{ github.event.inputs.dbstoragesize }} --admin-password ${{ secrets.DB_PASSWD }} --compartment-id ${{ secrets.OCI_COMPARTMENT_OCID }} --db-version ${{ github.event.inputs.dbversion }} --db-name ${{ github.event.inputs.dbname }} --display-name  ${{ github.event.inputs.dbdisplayname }}
-'
+      #    command: ' oci db autonomous-database create-from-clone --clone-type ${{ github.event.inputs.dbclonetype }} --source-id ${{ secrets.sourceID }} --compute-model ${{ github.event.inputs.dbcomputemodel }} --compute-count ${{ github.event.inputs.dbcpucount }} --data-storage-size-in-gbs ${{ github.event.inputs.dbstoragesize }} --admin-password ${{ secrets.DB_PASSWD }} --compartment-id ${{ secrets.OCI_COMPARTMENT_OCID }} --db-version ${{ github.event.inputs.dbversion }} --db-name ${{ github.event.inputs.dbname }} --display-name  ${{ github.event.inputs.dbdisplayname }}'
+
       #   silent: true
      
 
