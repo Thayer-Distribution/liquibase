@@ -68,14 +68,14 @@ jobs:
       OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
       OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
       #OCI_COMPARTMENT_ID: ${{ format('DB_{0}_USER', inputs.db-instance-name || 'thayeratp' ) }}
-      OCI_COMPARTMENT_NAME: ${{ format('DB_{0}_USER', inputs.compartment-name || 'thayer_dev' ) }}
+      OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
    
     steps:
       - name: Get Compartment ID the
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getcompartmentid
         with:
-          command: ' oci  iam compartment  list  --name "Innovation"  | jq ".data[0].id" '
+          command: ' oci  iam compartment  list  --name ${{ env.OCI_COMPARTMENT_NAME }}  | jq ".data[0].id" '
           silent: true
       - name: Display output
         run: echo ${{ steps.getcompartmentid.outputs.stdout }} 
