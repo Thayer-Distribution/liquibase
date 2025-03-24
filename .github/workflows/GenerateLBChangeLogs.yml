@@ -15,7 +15,7 @@ on:
         description: 'source database env name'
         required: true
         type: string
-        default: thayer_dev
+        default: dev
       db-instance-name:
         description: 'source database instance name to clone from'
         required: true
