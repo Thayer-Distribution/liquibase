@@ -66,6 +66,7 @@ jobs:
       - name: Add Compartment OCID To the Env 
         run: |
           retid=$(echo ${{ steps.getcompartmentid.outputs.output }} | jq .[0])
+          echo "out=true" >> $GITHUB_OUTPUT
           echo "retid"$retid
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
       - name: Get Source DB ID 
@@ -78,7 +79,7 @@ jobs:
       - name: Add Source DB OCID To the Env 
         run: |
           retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .[0])
-          
+           run: echo "out=true" >> $GITHUB_OUTPUT
           echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_ENV
       - name: Get Oracle Wallet
         uses: oracle-actions/run-oci-cli-command@v1.3.2
