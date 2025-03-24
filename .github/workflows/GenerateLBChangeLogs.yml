@@ -90,14 +90,10 @@ jobs:
         env:
          srcid: ${{ steps.getsourcedbid.outputs.output }}
         run: |
-          run: echo ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}  
-          echo "out=true" >> $GITHUB_OUTPUT
-          echo $srcid
-          echo "build_path=$srcid" >> $GITHUB_OUTPUT
-       
+          echo ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}  
           echo ${{ steps.getsourcedbid.outputs.output }} | jq .
           retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .[0])
-           run: echo "out=true" >> $GITHUB_OUTPUT
+          
           echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_ENV
       - name: Get Oracle Wallet
         uses: oracle-actions/run-oci-cli-command@v1.3.2
