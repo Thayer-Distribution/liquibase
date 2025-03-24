@@ -35,7 +35,7 @@ jobs:
   generatelbchangelog:
     runs-on: self-hosted
     environment: ${{ inputs.envname || 'thayer_dev' }} 
-    name: SQLcl Integration
+    name: GenerateDBChangeLogsUsingSqlcl
     env:
       OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
       OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
