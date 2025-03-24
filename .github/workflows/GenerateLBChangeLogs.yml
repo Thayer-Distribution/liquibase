@@ -1,4 +1,4 @@
-name: "setup sqlcl "
+name: "Generate DB ChangeLogs from Source DB "
 on:
 #  schedule:
 #    - cron: '*/5 * * * *'
