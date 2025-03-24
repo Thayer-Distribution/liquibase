@@ -90,11 +90,11 @@ jobs:
         env:
          srcid: ${{ steps.getsourcedbid.outputs.output }} | jq.data[0].id
         run: |
-          echo "buildpath**" ${{ steps.compartmentocidoutput.outputs.build_path }}
-          echo "srcid***"$srcid
-          echo "build_path=$srcid" >> $GITHUB_OUTPUT
+         
+          echo "srcid***"$srcid | jq.data[0].id
+          
           cat $GITHUB_OUTPUT
-          echo ${{ steps.getsourcedbid.outputs.output }} | jq .
+          echo ${{ steps.getsourcedbid.outputs.output }} | jq .data[0].id
           retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .data[0].id)
           
           echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_ENV
