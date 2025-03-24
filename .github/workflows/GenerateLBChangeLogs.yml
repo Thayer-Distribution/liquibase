@@ -124,6 +124,7 @@ jobs:
         working-directory: ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
       
         run: |
+         echo "SQLCL***"${{ secrets.SQLCL_HOME }}
          echo "SQLCL_HOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
          echo "${SQLCL_HOME}/bin" >> $GITHUB_PATH
          CMD="${SQLCL_HOME}/bin/sql -version"
