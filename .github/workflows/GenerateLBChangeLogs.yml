@@ -65,9 +65,10 @@ jobs:
           silent: false
       - name: Add Compartment OCID To the Env 
         run: |
+          echo "out=true" >> $GITHUB_OUTPUT
           echo ${{ steps.getcompartmentid.outputs.output }} | jq .
           retid=$(echo ${{ steps.getcompartmentid.outputs.output }} | jq .[0])
-          echo "out=true" >> $GITHUB_OUTPUT
+         
           echo "retid"$retid
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
       - name: Get Source DB ID 
@@ -79,6 +80,7 @@ jobs:
           silent: false
       - name: Add Source DB OCID To the Env 
         run: |
+          echo "out=true" >> $GITHUB_OUTPUT
           echo ${{ steps.getsourcedbid.outputs.output }} | jq .
           retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .[0])
            run: echo "out=true" >> $GITHUB_OUTPUT
