@@ -88,14 +88,14 @@ jobs:
         
       - name: Add Source DB OCID To the Env 
         env:
-         srcid: ${{ steps.getsourcedbid.outputs.output }}
+         srcid: ${{ steps.getsourcedbid.outputs.output }} | jq.data[0].id
         run: |
           echo "buildpath**" ${{ steps.compartmentocidoutput.outputs.build_path }}
           echo "srcid***"$srcid
           echo "build_path=$srcid" >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT
           echo ${{ steps.getsourcedbid.outputs.output }} | jq .
-          retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .[0])
+          retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .data[0].id)
           
           echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_ENV
       - name: Get Oracle Wallet
