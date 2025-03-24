@@ -1,4 +1,4 @@
-name: "Generate DB ChangeLogs from Source DB "
+name: "GenerateDBChangeLogs"
 on:
 #  schedule:
 #    - cron: '*/5 * * * *'
@@ -48,8 +48,9 @@ jobs:
       DB_ENV: ${{ github.event.inputs.envname || 'thayer_dev' }}
       DB_INST: ${{ github.event.inputs.db-instance-name || 'Thayer_Development' }}
       DB_USER: ${{ format('DB_{0}_USER', github.event.inputs.db-instance-name || 'liquibase_user' ) }}
-      DB_PASSWD: ${{ format('DB_{0}_PASSWD',github.event.inputs.db-instance-name || 'thayeratp') }}
-      DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',github.event.inputs.db-instance-name || 'thayeratp' ) }}
+      DB_PASSWD: ${{ format('DB_{0}_PASSWD',github.event.inputs.db-instance-name || 'thayerdev') }}
+      DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',github.event.inputs.db-instance-name || 'thayerdev' ) }}
+      OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
      
     steps:
       - name: Workspace Location
