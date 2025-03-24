@@ -52,6 +52,31 @@ jobs:
     steps:
       - name: Workspace Location
         run: echo $GITHUB_WORKSPACE
+      
+      - name: Get Compartment ID the
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        id: getcompartmentid
+        with:
+          command: ' oci  iam compartment  list '
+          query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
+          silent: false
+      - name: Add Compartment OCID To the Env 
+        run: |
+          retid=$(echo ${{ steps.getcompartmentid.outputs.output }} | jq .[0])
+          
+          echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
+      - name: Get Source DB ID 
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        id: getsourcedbid
+        with:
+          command: ' oci db autonomous-database list --compartment-id ${{ env.DB_COMPARTMENTID }} '
+          query: "data[?display-name=='${{ env.DB_INST }}'].id"
+          silent: false
+      - name: Add Source DB OCID To the Env 
+        run: |
+          retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .[0])
+          
+          echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_ENV
       - name: Get Oracle Wallet
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: get-wallet-id
