@@ -49,6 +49,7 @@ jobs:
       DB_INST: ${{ github.event.inputs.db-instance-name || 'Thayer_Development' }}
       DB_USER: ${{ format('DB_{0}_USER', github.event.inputs.db-instance-name || 'liquibase_user' ) }}
       DB_PASSWD: ${{ format('DB_{0}_PASSWD',github.event.inputs.db-instance-name || 'thayerdev') }}
+      DB_WALLET_PASSWD: ${{ format('DB_{0}_WALLET_PASSWD',github.event.inputs.db-instance-name || 'thayerdev') }}
       DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',github.event.inputs.db-instance-name || 'thayerdev' ) }}
       OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
      
@@ -103,7 +104,7 @@ jobs:
         id: get-wallet-id
        
         with:
-          command: ' oci db autonomous-database generate-wallet --autonomous-database-id ${{ env.DB_INST_ID }} --file ${{ env.DB_INST }}.zip --password ${{ secrets[env.DB_PASSWD] }} --generate-type SINGLE'
+          command: ' oci db autonomous-database generate-wallet --autonomous-database-id ${{ env.DB_INST_ID }} --file ${{ env.DB_INST }}.zip --password ${{ secrets[env.DB_WALLET_PASSWD] }} --generate-type SINGLE'
           silent: false
       - name : setup java
         uses: actions/setup-java@v4
