@@ -91,7 +91,7 @@ jobs:
          srcid: ${{ steps.getsourcedbid.outputs.output }}
         run: |
          
-          echo "srcid***"$srcid | jq.data[0].id
+          echo "srcid***"$srcid 
           cat $GITHUB_OUTPUT
           echo ${{ steps.getsourcedbid.outputs.output }} | jq .data[0].id
           retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .data[0].id)
