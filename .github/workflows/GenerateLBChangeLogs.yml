@@ -64,6 +64,7 @@ jobs:
           query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
           silent: false
       - name: Add Compartment OCID To the Env 
+        id: compartmentocidoutput
         env:
          cmpid: ${{ steps.getcompartmentid.outputs.output }}
         run: |
@@ -76,7 +77,7 @@ jobs:
          
           echo "retid"$retid
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
-           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_OUTPUT
+          echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_OUTPUT
       - name: Get Source DB ID 
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getsourcedbid
@@ -84,14 +85,15 @@ jobs:
           command: ' oci db autonomous-database list --compartment-id ${{ env.DB_COMPARTMENTID }} --display-name ${{ env.DB_INST }}.id '
           #query: "data[?'display-name'=='${{ env.DB_INST }}'].id"
           silent: false
+        
       - name: Add Source DB OCID To the Env 
         env:
          srcid: ${{ steps.getsourcedbid.outputs.output }}
         run: |
-          echo "srcid$$$"$srcid
+          run: echo ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}  
           echo "out=true" >> $GITHUB_OUTPUT
           echo $srcid
-          echo "build_path=${srcid}" >> $GITHUB_OUTPUT
+          echo "build_path=$srcid" >> $GITHUB_OUTPUT
        
           echo ${{ steps.getsourcedbid.outputs.output }} | jq .
           retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .[0])
