@@ -92,11 +92,12 @@ jobs:
         run: |
          
           echo "srcid***"$srcid 
-          cat $GITHUB_OUTPUT
+          #cat $GITHUB_OUTPUT
           echo ${{ steps.getsourcedbid.outputs.output }} | jq .data[0].id
           retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .data[0].id)
           
           echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_ENV
+          cat $GITHUB_ENV
       - name: Get Oracle Wallet
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: get-wallet-id
