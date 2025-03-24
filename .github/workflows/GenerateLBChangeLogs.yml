@@ -64,7 +64,10 @@ jobs:
           query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
           silent: false
       - name: Add Compartment OCID To the Env 
+        env:
+         cmpid: ${{ steps.getcompartmentid.outputs.output }}
         run: |
+          echo $cmpid
           echo "out=true" >> $GITHUB_OUTPUT
           echo ${{ steps.getcompartmentid.outputs.output }} | jq .
           retid=$(echo ${{ steps.getcompartmentid.outputs.output }} | jq .[0])
@@ -79,7 +82,10 @@ jobs:
           #query: "data[?'display-name'=='${{ env.DB_INST }}'].id"
           silent: false
       - name: Add Source DB OCID To the Env 
+        env:
+         srcid: ${{ steps.getsourcedbid.outputs.output }}
         run: |
+          echo "srcid$$$"$srcid
           echo "out=true" >> $GITHUB_OUTPUT
           echo ${{ steps.getsourcedbid.outputs.output }} | jq .
           retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .[0])
