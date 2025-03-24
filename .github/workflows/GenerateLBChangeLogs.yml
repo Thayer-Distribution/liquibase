@@ -128,7 +128,7 @@ jobs:
          echo "SQLCL_HOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
          echo "${SQLCL_HOME}/bin" >> $GITHUB_PATH
          CMD="${SQLCL_HOME}/bin/sql -version"
-         eval "${CMD}"
+         eval "/thayer_devops/sqlcl/bin/sql -version"
          echo "generate-changelog -output-file tstschema.xml " | sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
             
 
