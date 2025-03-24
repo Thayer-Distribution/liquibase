@@ -71,7 +71,6 @@ jobs:
           echo $cmpid
           echo "build_path=${cmpid}" >> $GITHUB_OUTPUT
         
-          echo "out=true" >> $GITHUB_OUTPUT
           echo ${{ steps.getcompartmentid.outputs.output }} | jq .
           retid=$(echo ${{ steps.getcompartmentid.outputs.output }} | jq .[0])
          
@@ -90,7 +89,7 @@ jobs:
         env:
          srcid: ${{ steps.getsourcedbid.outputs.output }}
         run: |
-          echo ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}  
+          echo ${{ steps.compartmentocidoutput.outputs.build_path }}  
           echo ${{ steps.getsourcedbid.outputs.output }} | jq .
           retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .[0])
           
