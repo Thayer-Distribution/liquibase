@@ -73,7 +73,7 @@ jobs:
         id: getsourcedbid
         with:
           command: ' oci db autonomous-database list --compartment-id ${{ env.DB_COMPARTMENTID }} '
-          query: "data[?display-name=='${{ env.DB_INST }}'].id"
+          query: "data[?'display-name'=='${{ env.DB_INST }}'].id"
           silent: false
       - name: Add Source DB OCID To the Env 
         run: |
