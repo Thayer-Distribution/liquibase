@@ -90,7 +90,7 @@ jobs:
         env:
          srcid: ${{ steps.getsourcedbid.outputs.output }}
         run: |
-          echo ${{ steps.compartmentocidoutput.outputs.build_path }}
+          echo "buildpath**" ${{ steps.compartmentocidoutput.outputs.build_path }}
           echo "srcid***"$srcid
           echo "build_path=$srcid" >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT
