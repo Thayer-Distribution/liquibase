@@ -72,7 +72,7 @@ jobs:
           echo "build_path=$cmpid" >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT
         
-          echo ${{ steps.getcompartmentid.outputs.output }} | jq .
+          echo "${{ steps.getcompartmentid.outputs.output }} | jq ."
           retid=$(echo ${{ steps.getcompartmentid.outputs.output }} | jq .[0])
          
           echo "retid"$retid
