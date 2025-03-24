@@ -49,7 +49,7 @@ jobs:
       DB_INST: ${{ github.event.inputs.db-instance-name || 'Thayer_Development' }}
       DB_USER: ${{ format('DB_{0}_USER', github.event.inputs.db-instance-name || 'liquibase_user' ) }}
       DB_PASSWD: ${{ format('DB_{0}_PASSWD',github.event.inputs.db-instance-name || 'thayerdev') }}
-      DB_WALLET_PASSWD: ${{ format('DB_{0}_WALLET_PASSWD',github.event.inputs.db-instance-name || 'thayerdev') }}
+      DB_WALLET_PASSWD: ${{ format('DB_{0}_WALLETPASSWD',github.event.inputs.db-instance-name || 'thayerdev') }}
       DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',github.event.inputs.db-instance-name || 'thayerdev' ) }}
       OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
      
