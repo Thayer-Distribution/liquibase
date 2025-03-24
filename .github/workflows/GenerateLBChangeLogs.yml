@@ -130,7 +130,7 @@ jobs:
          CMD="${SQLCLHOME}/bin/sql -version"
          eval "/thayer_devops/sqlcl/bin/sql -version"
          eval ${CMD}
-         echo "generate-changelog -output-file tstschema.xml " | sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
+         echo "generate-changelog -output-file tstschema.xml " | ${{ secrets.SQLCL_HOME }}/bin/sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
             
 
     
