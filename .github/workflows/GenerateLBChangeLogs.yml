@@ -21,6 +21,10 @@ on:
         required: true
         type: string
         default: 'Thayer_Development'
+      compartment-name:
+       description: 'compartment name to create the DB '
+       required: true
+       default: thayer_dev
       sqlcl-cmd:
         description: 'exact sqlcl lb command to execute '
         required: false
@@ -46,9 +50,7 @@ jobs:
       DB_USER: ${{ format('DB_{0}_USER', github.event.inputs.db-instance-name || 'liquibase_user' ) }}
       DB_PASSWD: ${{ format('DB_{0}_PASSWD',github.event.inputs.db-instance-name || 'thayeratp') }}
       DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',github.event.inputs.db-instance-name || 'thayeratp' ) }}
-      DB_INST_ID: ${{ github.event.inputs.db-instance-id || 'ocid1.autonomousdatabase.oc1.iad.anuwcljtntxkdlyambke7vkjliaugvioqteeobnp5q7vs5x6hdp56elwczla' }}
-  
-   
+     
     steps:
       - name: Workspace Location
         run: echo $GITHUB_WORKSPACE
