@@ -49,6 +49,10 @@ on:
        description: 'compartment name to create the DB '
        required: true
        default: thayer_dev
+      dbinstance-toclonefrom:
+       description: 'db instance to clone from '
+       required: true
+       default: Thayer_Development
       
   
 jobs:
@@ -69,6 +73,7 @@ jobs:
       OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
       #OCI_COMPARTMENT_ID: ${{ format('DB_{0}_USER', inputs.db-instance-name || 'thayeratp' ) }}
       OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
+      CLONEFROM_DB_INSTANCE: ${{  inputs.dbinstance-toclonefrom || 'Thayer_Development' }}
    
     steps:
       - name: Get Compartment ID the
@@ -79,9 +84,17 @@ jobs:
           query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
 
           silent: false
+      - name: Get Source DB ID 
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        id: getsourcedbid
+        with:
+          command: ' oci  iam compartment  list '
+          query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
+
+          silent: false
       - name: Display output
         run: |
-          retid=$(echo ${{ steps.getcompartmentid.outputs.output }} | jq .[0])
+          retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .[0])
           
           echo "compartmentocid=$(echo $retid)" >> $GITHUB_ENV
         
