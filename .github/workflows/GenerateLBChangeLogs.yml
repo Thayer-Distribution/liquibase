@@ -111,14 +111,8 @@ jobs:
         with:
          distribution: 'oracle'
          java-version: '21.0.4'
-      - name: 'set and cleanup dirs'
-        run: |
-          #rm -rf *.xml
-          echo "SQLCL_HOME=/thayer/sqlcl/" >> "$GITHUB_ENV"
-          # eval version
-          CMD="${SQLCL_HOME}/bin/sql -version"
-          eval "${CMD}"
-      - name: 'generate db schemas using lb'
+     
+      - name: 'setup dirs'
         run: |
           echo "SQLCL_HOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
           rm -rf ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/
@@ -126,7 +120,7 @@ jobs:
           mv $GITHUB_WORKSPACE/lbfiles ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/
           # export
           echo "${SQLCL_HOME}/bin" >> $GITHUB_PATH
-      - name: 'execute the udpate'
+      - name: 'generate changelogs'
         working-directory: ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
         run: echo "generate-changelog -output-file tstschema.xml " | sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
             
