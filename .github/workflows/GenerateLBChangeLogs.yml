@@ -32,9 +32,17 @@ on:
         default: 'lb generate-changelog -output-file controller.xml'
 
 jobs:
+  getcompartmentanddbinstid:
+   uses: './.github/workflows/GetCompartmentIdandDBInstanceID.yml'
+   with:
+          envname: ${{ inputs.envname || 'dev' }} 
+          db-instance-name:  ${{ github.event.inputs.db-instance-name || 'Thayer_Development' }}
+          compartment-name: ${{  inputs.compartment-name || 'thayer_dev' }}
+   secrets: inherit
   generatelbchangelog:
     runs-on: self-hosted
-    environment: ${{ inputs.envname || 'thayer_dev' }} 
+    environment: ${{ inputs.envname || 'dev' }} 
+    
     name: GenerateDBChangeLogsUsingSqlcl
     env:
       OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
@@ -57,27 +65,20 @@ jobs:
     steps:
       - name: Workspace Location
         run: echo $GITHUB_WORKSPACE
-      - name: Get Compartment and DB Instance ID
-        id: getcompartmentid
-        uses: './.github/workflows/GetCompartmentIdandDBInstanceID.yml'
-        with:
-          envname: '${{ env.DB_ENV }}'
-          db-instance-name: '${{ env.DB_INST }}'
-          compartment-name: '${{ env.OCI_COMPARTMENT_NAME }}'
-        secrets: inherit
+    
       
       - name: Add Compartment OCID To the Env 
         id: compartmentocidoutput
         env:
-         cmpid: ${{ steps.getcompartmentid.outputs.compartmentocid }}
+         cmpid: ${{ jobs.getcompartmentanddbinstid.outputs.compartmentocid }}
          
         run: |
           echo "test****"$cmpid
           echo "build_path=$cmpid" >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT
         
-          echo "${{ steps.getcompartmentid.outputs.output }} | jq ."
-          retid=$(echo ${{ steps.getcompartmentid.outputs.output }} | jq .[0])
+          echo "${{ steps.getcompartmentid.outputs.output }} "
+          retid=$(echo ${{ jobs.getcompartmentanddbinstid.outputs.compartmentocid }})
          
           echo "retid"$retid
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
@@ -86,13 +87,13 @@ jobs:
         
       - name: Add Source DB OCID To the Env 
         env:
-         srcid: ${{ steps.getsourcedbid.outputs.dbinstanceocid }}
+         srcid: ${{ jobs.getcompartmentanddbinstid.outputs.dbinstanceocid }}
         run: |
          
           echo "srcid***"$srcid 
           #cat $GITHUB_OUTPUT
-          echo ${{ steps.getsourcedbid.outputs.dbinstanceocid }} | jq .
-          retid=$(echo ${{ steps.getsourcedbid.outputs.dbinstanceocid }} | jq .)
+          echo ${{ jobs.getcompartmentanddbinstid.outputs.dbinstanceocid }}
+          retid=$(echo ${{ jobs.getcompartmentanddbinstid.outputs.dbinstanceocid }})
           
           echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_ENV
           cat $GITHUB_ENV
