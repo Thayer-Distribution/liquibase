@@ -29,7 +29,7 @@ on:
         description: 'exact sqlcl lb command to execute '
         required: false
         type: string
-        default: 'lb generate-changelog -output-file tstschema.xml'
+        default: 'lb generate-changelog -output-file controller.xml'
 
 jobs:
   generatelbchangelog:
