@@ -25,6 +25,13 @@ on:
        description: 'compartment name to create the DB '
        required: true
        default: thayer_dev
+   outputs:
+      compartmentocid:
+        description: "return compartment ocid"
+        value: ${{ jobs.getcompartmentanddbinstanceid.outputs.compartmentocid }}
+      dbinstanceocid:
+        description: "return db instance ocid"
+        value: ${{ jobs.getcompartmentanddbinstanceid.outputs.dbinstanceocid }}
      
 jobs:
   getcompartmentanddbinstanceid:
@@ -50,6 +57,7 @@ jobs:
         run: echo $GITHUB_WORKSPACE
       
       - name: Get Compartment ID the
+        if: "${{ github.event.inputs.compartment-name != '' }}"
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getcompartmentid
         with:
@@ -57,12 +65,13 @@ jobs:
           query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
           silent: false
       - name: Add Compartment OCID To the Env 
+        if: "${{ github.event.inputs.compartment-name != '' }}"
         id: compartmentocidoutput
         env:
          cmpid: ${{ steps.getcompartmentid.outputs.output }}
         run: |
           echo "test****"$cmpid
-          echo "build_path=$cmpid" >> $GITHUB_OUTPUT
+          echo "cmpid=$cmpid" >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT
         
           echo "${{ steps.getcompartmentid.outputs.output }} | jq ."
@@ -72,6 +81,8 @@ jobs:
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_OUTPUT
       - name: Get Source DB ID 
+        id: dbinstocidoutput
+        if: "${{ github.event.inputs.db-instance-name != '' }}"
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getsourcedbid
         with:
@@ -80,6 +91,7 @@ jobs:
           silent: false
         
       - name: Add Source DB OCID To the Env 
+        if: "${{ github.event.inputs.db-instance-name != '' }}"
         env:
          srcid: ${{ steps.getsourcedbid.outputs.output }}
         run: |
@@ -90,10 +102,12 @@ jobs:
           retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .data[0].id)
           
           echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_ENV
+          echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_OUPUT
           cat $GITHUB_ENV
+    outputs:
+      compartmentocid: ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}
+      dbinstanceocid: ${{ jobs.dbinstocidoutput.outputs.DB_INST_ID }}
       
-    
-     
       
      
     
