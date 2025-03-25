@@ -1,0 +1,122 @@
+name: "oci db clone "
+on:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+   inputs:
+      dbname:
+        description: 'database name '
+        required: true
+        default: 'dev1'
+      dbdisplayname:
+        description: 'database display name '
+        required: true
+        default: 'dev2'
+      dbclonetype:
+        type: choice
+        options:
+          - FULL
+          - METADATA
+          - PARTIAL
+        description: 'database clone type name '
+        required: true
+        default: 'FULL'
+      dbversion:
+        type: choice
+        options:
+          - 19c
+          - 23ai
+        description: 'database version   '
+        required: true
+        default: '19c'
+      dbcomputemodel:
+        type: choice
+        options:
+          - ECPU
+          - ECPU
+        description: 'database compute model  '
+        required: true
+        default: 'ECPU'
+      dbcpucount:
+       description: 'database cpu count '
+       required: true
+       default: 2
+      dbstoragesize:
+       description: 'database storage size in gb '
+       required: true
+       default: 20
+      compartment-name:
+       description: 'compartment name to create the DB '
+       required: true
+       default: thayer_dev
+      dbinstance-toclonefrom:
+       description: 'db instance to clone from '
+       required: true
+       default: Thayer_Development
+      
+  
+jobs:
+  getcompartmentanddbinstid:
+   uses: './.github/workflows/GetCompartmentAndDBInstanceID.yml'
+   with:
+          envname: ${{ inputs.envname || 'dev' }} 
+          db-instance-name:  ${{ inputs.dbinstance-toclonefrom || 'Thayer_Development' }}
+          compartment-name: ${{  inputs.compartment-name || 'thayer_dev' }}
+   secrets: inherit
+  clonedb-instance:
+    runs-on: self-hosted
+    needs: getcompartmentanddbinstid
+    environment:  ${{
+         github.ref_name == 'master' && 'dev'
+         || github.ref_name == 'dev'    && 'dev'
+         || 'oracleoci'
+      }}
+    name: OCI DB CLONE
+    env:
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+      OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
+      #OCI_COMPARTMENT_ID: ${{ format('DB_{0}_USER', inputs.db-instance-name || 'thayeratp' ) }}
+      OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
+      CLONEFROM_DB_INSTANCE: ${{  inputs.dbinstance-toclonefrom || 'Thayer_Development' }}
+   
+    steps:
+      - name: Get Compartment ID the
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        id: getcompartmentid
+        with:
+          command: ' oci  iam compartment  list '
+          query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
+
+          silent: false
+      - name: Get Source DB ID 
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        id: getsourcedbid
+        with:
+          command: ' oci  iam compartment  list '
+          query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
+
+          silent: false
+      - name: Display output
+        run: |
+          retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .[0])
+          
+          echo "compartmentocid=$(echo $retid)" >> $GITHUB_ENV
+        
+      - name: Display output2
+        run: |
+          echo ${{ env.compartmentocid }}
+         
+        
+      
+      - name: Clone the DB
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        id: cloneatpdb
+        with:
+          command: ' oci db autonomous-database create-from-clone --clone-type ${{ github.event.inputs.dbclonetype }} --source-id ${{ secrets.sourceID }} --compute-model ${{ github.event.inputs.dbcomputemodel }} --compute-count ${{ github.event.inputs.dbcpucount }} --data-storage-size-in-gbs ${{ github.event.inputs.dbstoragesize }} --admin-password ${{ secrets.DB_PASSWD }} --compartment-id ${{ secrets.OCI_COMPARTMENT_OCID }} --db-version ${{ github.event.inputs.dbversion }} --db-name ${{ github.event.inputs.dbname }} --display-name  ${{ github.event.inputs.dbdisplayname }}'
+          silent: true
+     
+
