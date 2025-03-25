@@ -1,0 +1,57 @@
+# This is a basic workflow to help you get started with Actions
+name: SyncLBFilesFromSrcDBToTgtDB
+on:
+  
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      envname:
+        type: choice
+        description: 'target environment name '
+        required: true
+        options:
+        - 'dev'
+        - 'qa'
+        - 'uat'
+        default: 'dev'
+      db-instance-name:
+        description: 'database instance name '
+        required: true
+        default: 'Thayer_Development'
+      db-instance-id:
+        description: 'database instance id '
+        required: true
+        default: 'ocid1.autonomousdatabase.oc1.iad.anuwcljtntxkdlyambke7vkjliaugvioqteeobnp5q7vs5x6hdp56elwczla'
+      sqlcltag:
+        description: 'tag name to use '
+        required: false
+        default: 'basev1'
+       
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  devinstances:
+    strategy:
+      matrix:
+        include: 
+        - envname: dev
+          db-instance-name: 'Thayer_Development'
+          db-instance-id: 'ocid1.autonomousdatabase.oc1.iad.anuwcljtntxkdlyambke7vkjliaugvioqteeobnp5q7vs5x6hdp56elwczla'
+        - envname: dev
+          db-instance-name: 'Thayer_Development'
+          db-instance-id: 'ocid1.autonomousdatabase.oc1.iad.anuwcljtntxkdlyambke7vkjliaugvioqteeobnp5q7vs5x6hdp56elwczla'
+        
+    uses: './.github/workflows/DBChangesSync.yml'
+    with:
+      envname: '${{ matrix.envname }}'
+      db-instance-name: '${{ matrix.db-instance-name }}'
+      db-instance-id: '${{ matrix.db-instance-id }}'
+      
+    secrets: inherit
+     
+
+          
+         
+
+    
+     
