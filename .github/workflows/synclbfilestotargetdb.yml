@@ -1,36 +1,120 @@
 # This is a basic workflow to help you get started with Actions
-
-name: CI
-
+name: DBChangesSyncToTargetDBInstances
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+ workflow_call:
+   inputs:
+      envname:
+        description: 'database env name'
+        required: true
+        type: string
+        default: oracleoci
+      db-instance-name:
+        description: 'database instance name '
+        required: true
+        type: string
+        default: 'thayeratp'
+      db-instance-id:
+        description: 'database instance id '
+        required: true
+        type: string
+        default: 'ocid1.autonomousdatabase.oc1.iad.anuwcljtntxkdlyambke7vkjliaugvioqteeobnp5q7vs5x6hdp56elwczla'
+      sqlcl-cmd:
+        description: 'exact sqlcl lb command to execute '
+        required: false
+        type: string
+        default: 'lb update -changelog-file controller.xml'
+      tagnametouse:
+        description: 'tagname to version the update '
+        required: false
+        type: string
+        default: 'basev1'
+        
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+   my-instances:
+    runs-on: self-hosted
+      
+     
+    #environment: |-
+     # ${{
+     #    github.ref_name == 'master' && 'oracleoci'
+     #    || github.ref_name == 'dev'  && 'dev'
+      #   || 'oracleoci'
+     # }}
+    environment: ${{ inputs.envname }}
+    name: Integrate and execute LB through SQLcl 
+    env:
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_KEY_FILE: ${{ secrets.OCI_CLI_KEY_FILE }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+      OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
+      OCI_CLI_RC_FILE: "/home/jakkoo/.oci/config"
+      RUNNER_TOOL_CACHE: ${{ secrets.DB_ENV_BASEDIR }}/${{ inputs.envname || 'oracleoci' }}
+      AGENT_TOOLSDIRECTORY: ${{ secrets.DB_ENV_BASEDIR }}/${{ inputs.envname || 'oracleoci' }}
+      DB_ENV: ${{ inputs.envname || 'oracleoci' }}
+      DB_INST: ${{ inputs.db-instance-name || 'thayeratp' }}
+      DB_USER: ${{ format('DB_{0}_USER', inputs.db-instance-name || 'thayeratp' ) }}
+      DB_PASSWD: ${{ format('DB_{0}_PASSWD',inputs.db-instance-name || 'thayeratp') }}
+      DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',inputs.db-instance-name || 'thayeratp' ) }}
+      DB_INST_ID: ${{ inputs.db-instance-id || 'ocid1.autonomousdatabase.oc1.iad.anuwcljtntxkdlyambke7vkjliaugvioqteeobnp5q7vs5x6hdp56elwczla' }}
+      SQL_LB_CMD: ${{ inputs.sqlcl-cmd || 'lb update -changelog-file controller.xml' }}
+      PR_NUMBER: ${{ github.event.number ||  inputs.tagnametouse  || 'basev1' }}
+      
+  
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+     
+      - name: Workspace Location
+        run: | 
+         echo $GITHUB_WORKSPACE
+         echo "DBPASSWD***"${{ env.DB_PASSWD }}
+         echo "inputs***"${{ inputs.envname }}
+         echo "github user****"${{ github.actor }}
+         echo "HOME***"$HOME
+         echo "userid***"$id
+      - name: checkout dev
+        uses: actions/checkout@v4
+        with:
+         repository: ${{ github.repository }}
+         ref: 'dev'
+         path: lbfiles
+         token: ${{ github.token }}
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Get Oracle Wallet
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        id: get-wallet-id
+       
+        with:
+          command: ' oci db autonomous-database generate-wallet --autonomous-database-id ${{ env.DB_INST_ID }} --file ${{ env.DB_INST }}.zip --password ${{ secrets[env.DB_PASSWD] }} --generate-type SINGLE
+'
+          silent: false
+      - name : setup java
+        uses: actions/setup-java@v4
+        with:
+         distribution: 'oracle'
+         java-version: '21'
+      - name: 'setup directories'
+        
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          echo "SQLCL_HOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
+            rm -rf ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/
+          unzip  $GITHUB_WORKSPACE/${{ env.DB_INST }}.zip -d ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/
+          mv $GITHUB_WORKSPACE/lbfiles ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/
+          # export
+          echo "${SQLCL_HOME}/bin" >> $GITHUB_PATH
+      - name: 'execute the udpate'
+        working-directory: ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
+        run: |
+          echo "${{ env.SQL_LB_CMD }}" | sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
+          echo "lb tag -tag ${{ env.PR_NUMBER }} " | sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}  
+
+          
+         
+
+    
+     
+
