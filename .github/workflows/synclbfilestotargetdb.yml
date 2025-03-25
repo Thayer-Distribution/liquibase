@@ -8,12 +8,12 @@ on:
         description: 'database env name'
         required: true
         type: string
-        default: oracleoci
+        default: dev
       db-instance-name:
         description: 'database instance name '
         required: true
         type: string
-        default: 'thayeratp'
+        default: 'thayer_dev'
       db-instance-id:
         description: 'database instance id '
         required: true
@@ -34,15 +34,15 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-   my-instances:
+   synclbfilestotargetenv:
     runs-on: self-hosted
       
      
     #environment: |-
      # ${{
-     #    github.ref_name == 'master' && 'oracleoci'
+     #    github.ref_name == 'master' && 'dev'
      #    || github.ref_name == 'dev'  && 'dev'
-      #   || 'oracleoci'
+      #   || 'dev'
      # }}
     environment: ${{ inputs.envname }}
     name: Integrate and execute LB through SQLcl 
@@ -50,17 +50,17 @@ jobs:
       OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
       OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
       OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
-      OCI_CLI_KEY_FILE: ${{ secrets.OCI_CLI_KEY_FILE }}
+      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
       OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
       OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
-      OCI_CLI_RC_FILE: "/home/jakkoo/.oci/config"
-      RUNNER_TOOL_CACHE: ${{ secrets.DB_ENV_BASEDIR }}/${{ inputs.envname || 'oracleoci' }}
-      AGENT_TOOLSDIRECTORY: ${{ secrets.DB_ENV_BASEDIR }}/${{ inputs.envname || 'oracleoci' }}
-      DB_ENV: ${{ inputs.envname || 'oracleoci' }}
-      DB_INST: ${{ inputs.db-instance-name || 'thayeratp' }}
-      DB_USER: ${{ format('DB_{0}_USER', inputs.db-instance-name || 'thayeratp' ) }}
-      DB_PASSWD: ${{ format('DB_{0}_PASSWD',inputs.db-instance-name || 'thayeratp') }}
-      DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',inputs.db-instance-name || 'thayeratp' ) }}
+      
+      RUNNER_TOOL_CACHE: ${{ secrets.DB_ENV_BASEDIR }}/${{ inputs.envname || 'dev' }}
+      AGENT_TOOLSDIRECTORY: ${{ secrets.DB_ENV_BASEDIR }}/${{ inputs.envname || 'dev' }}
+      DB_ENV: ${{ inputs.envname || 'dev' }}
+      DB_INST: ${{ inputs.db-instance-name || 'thayer_dev' }}
+      DB_USER: ${{ format('DB_{0}_USER', inputs.db-instance-name || 'thayer_dev' ) }}
+      DB_PASSWD: ${{ format('DB_{0}_PASSWD',inputs.db-instance-name || 'thayer_dev') }}
+      DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',inputs.db-instance-name || 'thayer_dev' ) }}
       DB_INST_ID: ${{ inputs.db-instance-id || 'ocid1.autonomousdatabase.oc1.iad.anuwcljtntxkdlyambke7vkjliaugvioqteeobnp5q7vs5x6hdp56elwczla' }}
       SQL_LB_CMD: ${{ inputs.sqlcl-cmd || 'lb update -changelog-file controller.xml' }}
       PR_NUMBER: ${{ github.event.number ||  inputs.tagnametouse  || 'basev1' }}
@@ -109,8 +109,9 @@ jobs:
       - name: 'execute the udpate'
         working-directory: ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
         run: |
-          echo "${{ env.SQL_LB_CMD }}" | sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
-          echo "lb tag -tag ${{ env.PR_NUMBER }} " | sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}  
+          echo "Testing***"
+          #echo "${{ env.SQL_LB_CMD }}" | sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
+          #echo "lb tag -tag ${{ env.PR_NUMBER }} " | sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}  
 
           
          
