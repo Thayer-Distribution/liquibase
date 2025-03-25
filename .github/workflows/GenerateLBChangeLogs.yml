@@ -57,18 +57,20 @@ jobs:
     steps:
       - name: Workspace Location
         run: echo $GITHUB_WORKSPACE
-      
-      - name: Get Compartment ID the
-        uses: oracle-actions/run-oci-cli-command@v1.3.2
+      - name: Get Compartment and DB Instance ID
         id: getcompartmentid
+        uses: './.github/workflows/GetCompartmentIdandDBInstanceID.yml'
         with:
-          command: ' oci  iam compartment  list '
-          query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
-          silent: false
+          envname: '${{ env.DB_ENV }}'
+          db-instance-name: '${{ env.DB_INST }}'
+          compartment-name: '${{ env.OCI_COMPARTMENT_NAME }}'
+        secrets: inherit
+      
       - name: Add Compartment OCID To the Env 
         id: compartmentocidoutput
         env:
-         cmpid: ${{ steps.getcompartmentid.outputs.output }}
+         cmpid: ${{ steps.getcompartmentid.outputs.compartmentocid }}
+         
         run: |
           echo "test****"$cmpid
           echo "build_path=$cmpid" >> $GITHUB_OUTPUT
@@ -80,23 +82,17 @@ jobs:
           echo "retid"$retid
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_OUTPUT
-      - name: Get Source DB ID 
-        uses: oracle-actions/run-oci-cli-command@v1.3.2
-        id: getsourcedbid
-        with:
-          command: ' oci db autonomous-database list --compartment-id ${{ env.DB_COMPARTMENTID }} --display-name ${{ env.DB_INST }}'
-          #query: "data[?'display-name'=='${{ env.DB_INST }}'].id"
-          silent: false
+    
         
       - name: Add Source DB OCID To the Env 
         env:
-         srcid: ${{ steps.getsourcedbid.outputs.output }}
+         srcid: ${{ steps.getsourcedbid.outputs.dbinstanceocid }}
         run: |
          
           echo "srcid***"$srcid 
           #cat $GITHUB_OUTPUT
-          echo ${{ steps.getsourcedbid.outputs.output }} | jq .data[0].id
-          retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .data[0].id)
+          echo ${{ steps.getsourcedbid.outputs.dbinstanceocid }} | jq .
+          retid=$(echo ${{ steps.getsourcedbid.outputs.dbinstanceocid }} | jq .)
           
           echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_ENV
           cat $GITHUB_ENV
