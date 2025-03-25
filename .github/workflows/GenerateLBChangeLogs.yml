@@ -81,7 +81,7 @@ jobs:
           echo "${{ needs.jobs.getcompartmentanddbinstid.outputs.compartmentocid }} "
           retid=$(echo ${{ needs.jobs.getcompartmentanddbinstid.outputs.compartmentocid }})
          
-          echo "retid"$retid
+          echo "retid******"$retid
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_OUTPUT
     
