@@ -1,4 +1,4 @@
-name: "GenerateDBChangeLogs"
+name: "GenerateDBChangeLogs_bkup"
 on:
 #  schedule:
 #    - cron: '*/5 * * * *'
