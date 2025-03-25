@@ -106,7 +106,7 @@ jobs:
           cat $GITHUB_ENV
     outputs:
       compartmentocid: ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}
-      dbinstanceocid: ${{ jobs.getsourcedbid.outputs.DB_INST_ID }}
+      dbinstanceocid: ${{ steps.getsourcedbid.outputs.DB_INST_ID }}
       
       
      
