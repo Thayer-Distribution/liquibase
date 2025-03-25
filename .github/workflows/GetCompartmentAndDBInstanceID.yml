@@ -17,12 +17,12 @@ on:
         type: string
         default: dev
       db-instance-name:
-        description: 'source database instance name to clone from'
+        description: 'source database instance name'
         required: true
         type: string
         default: 'Thayer_Development'
       compartment-name:
-       description: 'compartment name to create the DB '
+       description: 'compartment name to retrieve the DB instance details '
        required: true
        type: string
        default: thayer_dev
