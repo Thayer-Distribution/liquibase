@@ -52,7 +52,7 @@ jobs:
       DB_WALLET_PASSWD: ${{ format('DB_{0}_WALLETPASSWD',github.event.inputs.db-instance-name || 'thayerdev') }}
       DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',github.event.inputs.db-instance-name || 'thayerdev' ) }}
       OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
-      LBSQLCMD: ${{  inputs.lbsqlclcmd || 'lb generate-changelog -output-file tstschema.xml' }}
+      LBSQLCLCMD: ${{  inputs.lbsqlclcmd || 'lb generate-changelog -output-file tstschema.xml' }}
      
     steps:
       - name: Workspace Location
@@ -130,7 +130,7 @@ jobs:
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
         
       
-         echo "${{ env.LBCMD}} " | ${{ secrets.SQLCL_HOME }}/bin/sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
+         echo "${{ env.LBSQLCLCMD}} " | ${{ secrets.SQLCL_HOME }}/bin/sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
             
 
     
