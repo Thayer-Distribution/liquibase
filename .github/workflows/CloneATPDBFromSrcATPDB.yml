@@ -4,6 +4,14 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
    inputs:
+      envname:
+        type: choice
+        description: 'target environment name '
+        required: true
+        options:
+        - 'dev'
+        - 'qa'
+        - 'uat'
       dbname:
         description: 'database name '
         required: true
