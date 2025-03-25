@@ -1,0 +1,142 @@
+name: "GenerateDBChangeLogs"
+on:
+#  schedule:
+#    - cron: '*/5 * * * *'
+  
+ # push:
+ #   branches: [ "main" ]
+ # pull_request:
+ #   branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+   inputs:
+      envname:
+        description: 'source database env name'
+        required: true
+        type: string
+        default: dev
+      db-instance-name:
+        description: 'source database instance name to clone from'
+        required: true
+        type: string
+        default: 'Thayer_Development'
+      compartment-name:
+       description: 'compartment name to create the DB '
+       required: true
+       default: thayer_dev
+      lbsqlclcmd:
+        description: 'exact sqlcl lb command to execute '
+        required: false
+        type: string
+        default: 'lb generate-changelog -output-file controller.xml'
+
+jobs:
+  generatelbchangelog:
+    runs-on: self-hosted
+    environment: ${{ inputs.envname || 'thayer_dev' }} 
+    name: GenerateDBChangeLogsUsingSqlcl
+    env:
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+      OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
+      #RUNNER_TOOL_CACHE: /thayer/envs/dev
+      #AGENT_TOOLSDIRECTORY: /thayer/envs/dev
+      DB_ENV: ${{ github.event.inputs.envname || 'thayer_dev' }}
+      DB_INST: ${{ github.event.inputs.db-instance-name || 'Thayer_Development' }}
+      DB_USER: ${{ format('DB_{0}_USER', github.event.inputs.db-instance-name || 'liquibase_user' ) }}
+      DB_PASSWD: ${{ format('DB_{0}_PASSWD',github.event.inputs.db-instance-name || 'thayerdev') }}
+      DB_WALLET_PASSWD: ${{ format('DB_{0}_WALLETPASSWD',github.event.inputs.db-instance-name || 'thayerdev') }}
+      DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',github.event.inputs.db-instance-name || 'thayerdev' ) }}
+      OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
+      LBSQLCLCMD: ${{  inputs.lbsqlclcmd || 'lb generate-changelog -output-file tstschema.xml' }}
+     
+    steps:
+      - name: Workspace Location
+        run: echo $GITHUB_WORKSPACE
+      
+      - name: Get Compartment ID the
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        id: getcompartmentid
+        with:
+          command: ' oci  iam compartment  list '
+          query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
+          silent: false
+      - name: Add Compartment OCID To the Env 
+        id: compartmentocidoutput
+        env:
+         cmpid: ${{ steps.getcompartmentid.outputs.output }}
+        run: |
+          echo "test****"$cmpid
+          echo "build_path=$cmpid" >> $GITHUB_OUTPUT
+          cat $GITHUB_OUTPUT
+        
+          echo "${{ steps.getcompartmentid.outputs.output }} | jq ."
+          retid=$(echo ${{ steps.getcompartmentid.outputs.output }} | jq .[0])
+         
+          echo "retid"$retid
+          echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
+          echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_OUTPUT
+      - name: Get Source DB ID 
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        id: getsourcedbid
+        with:
+          command: ' oci db autonomous-database list --compartment-id ${{ env.DB_COMPARTMENTID }} --display-name ${{ env.DB_INST }}'
+          #query: "data[?'display-name'=='${{ env.DB_INST }}'].id"
+          silent: false
+        
+      - name: Add Source DB OCID To the Env 
+        env:
+         srcid: ${{ steps.getsourcedbid.outputs.output }}
+        run: |
+         
+          echo "srcid***"$srcid 
+          #cat $GITHUB_OUTPUT
+          echo ${{ steps.getsourcedbid.outputs.output }} | jq .data[0].id
+          retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .data[0].id)
+          
+          echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_ENV
+          cat $GITHUB_ENV
+      - name: Get Oracle Wallet
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        id: get-wallet-id
+       
+        with:
+          command: ' oci db autonomous-database generate-wallet --autonomous-database-id ${{ env.DB_INST_ID }} --file ${{ env.DB_INST }}.zip --password ${{ secrets[env.DB_WALLET_PASSWD] }} --generate-type SINGLE'
+          silent: false
+      - name : setup java
+        uses: actions/setup-java@v4
+        with:
+         distribution: 'oracle'
+         java-version: '21.0.4'
+     
+      - name: 'setup dirs'
+        run: |
+          
+          rm -rf ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/
+          mkdir -p ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
+          unzip  $GITHUB_WORKSPACE/${{ env.DB_INST }}.zip -d ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/
+          
+         
+      - name: 'generate changelogs'
+        working-directory: ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
+      
+        run: |
+         echo "SQLCL***"${{ secrets.SQLCL_HOME }}
+         echo "SQLCLHOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
+         echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
+        
+      
+         echo "${{ env.LBSQLCLCMD}} " | ${{ secrets.SQLCL_HOME }}/bin/sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
+            
+
+    
+    
+     
+      
+     
+    
+
