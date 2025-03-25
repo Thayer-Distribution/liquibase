@@ -23,10 +23,7 @@ on:
         description: 'database instance name '
         required: true
         default: 'Thayer_Development'
-      db-instance-id:
-        description: 'database instance id '
-        required: true
-        default: 'ocid1.autonomousdatabase.oc1.iad.anuwcljtntxkdlyambke7vkjliaugvioqteeobnp5q7vs5x6hdp56elwczla'
+      
       sqlcltag:
         description: 'tag name to use '
         required: false
