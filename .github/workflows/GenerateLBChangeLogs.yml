@@ -95,7 +95,7 @@ jobs:
           #cat $GITHUB_OUTPUT
           echo ${{ needs.jobs.getcompartmentanddbinstid.outputs.dbinstanceocid }}
           retid=$(echo ${{ needs.jobs.getcompartmentanddbinstid.outputs.dbinstanceocid }})
-          
+          echo "retid***$retid
           echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_ENV
           cat $GITHUB_ENV
       - name: Get Oracle Wallet
