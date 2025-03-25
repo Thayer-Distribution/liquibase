@@ -39,6 +39,7 @@ jobs:
           db-instance-name:  ${{ github.event.inputs.db-instance-name || 'Thayer_Development' }}
           compartment-name: ${{  inputs.compartment-name || 'thayer_dev' }}
    secrets: inherit
+   
   generatelbchangelog:
     needs: getcompartmentanddbinstid
     runs-on: self-hosted
