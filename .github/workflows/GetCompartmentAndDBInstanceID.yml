@@ -103,7 +103,7 @@ jobs:
           retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .data[0].id)
           
           echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_ENV
-          echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_OUPUT
+          echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_OUTPUT
           cat $GITHUB_ENV
     outputs:
       compartmentocid: ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}
