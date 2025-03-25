@@ -81,7 +81,7 @@ jobs:
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_OUTPUT
       - name: Get Source DB ID 
-        id: dbinstocidoutput
+       
         if: "${{ github.event.inputs.db-instance-name != '' }}"
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getsourcedbid
@@ -106,7 +106,7 @@ jobs:
           cat $GITHUB_ENV
     outputs:
       compartmentocid: ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}
-      dbinstanceocid: ${{ jobs.dbinstocidoutput.outputs.DB_INST_ID }}
+      dbinstanceocid: ${{ jobs.getsourcedbid.outputs.DB_INST_ID }}
       
       
      
