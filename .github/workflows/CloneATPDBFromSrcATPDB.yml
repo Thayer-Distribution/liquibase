@@ -65,6 +65,7 @@ jobs:
    secrets: inherit
   clonedb-instance:
     runs-on: self-hosted
+    needs: getcompartmentanddbinstid
     environment:  ${{
          github.ref_name == 'master' && 'dev'
          || github.ref_name == 'dev'    && 'dev'
