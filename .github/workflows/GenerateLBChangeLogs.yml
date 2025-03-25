@@ -87,6 +87,7 @@ jobs:
     
         
       - name: Add Source DB OCID To the Env 
+        id: dbinstocidoutput
         env:
          srcid: ${{ needs.jobs.getcompartmentanddbinstid.outputs.dbinstanceocid }}
         run: |
