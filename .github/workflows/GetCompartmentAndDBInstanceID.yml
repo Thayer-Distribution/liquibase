@@ -24,6 +24,7 @@ on:
       compartment-name:
        description: 'compartment name to create the DB '
        required: true
+       type: string
        default: thayer_dev
    outputs:
       compartmentocid:
