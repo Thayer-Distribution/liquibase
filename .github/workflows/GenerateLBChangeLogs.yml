@@ -72,15 +72,15 @@ jobs:
       - name: Add Compartment OCID To the Env 
         id: compartmentocidoutput
         env:
-         cmpid: ${{ needs.jobs.getcompartmentanddbinstid.outputs.compartmentocid }}
+         cmpid: ${{ needs.getcompartmentanddbinstid.outputs.compartmentocid }}
          
         run: |
           echo "test****"$cmpid
           echo "build_path=$cmpid" >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT
         
-          echo "${{ needs.jobs.getcompartmentanddbinstid.outputs.compartmentocid }} "
-          retid=$(echo ${{ needs.jobs.getcompartmentanddbinstid.outputs.compartmentocid }})
+          echo "${{ needs.getcompartmentanddbinstid.outputs.compartmentocid }} "
+          retid=$(echo ${{ needs.getcompartmentanddbinstid.outputs.compartmentocid }})
          
           echo "compartmentid******"$retid
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
@@ -90,13 +90,13 @@ jobs:
       - name: Add Source DB OCID To the Env 
         id: dbinstocidoutput
         env:
-         srcid: ${{ needs.jobs.getcompartmentanddbinstid.outputs.dbinstanceocid }}
+         srcid: ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }}
         run: |
          
           echo "srcid***"$srcid 
           #cat $GITHUB_OUTPUT
-          echo ${{ needs.jobs.getcompartmentanddbinstid.outputs.dbinstanceocid }}
-          retid=$(echo ${{ needs.jobs.getcompartmentanddbinstid.outputs.dbinstanceocid }})
+          echo ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }}
+          retid=$(echo ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }})
           echo "retid*** " $retid
           echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_ENV
           cat $GITHUB_ENV
