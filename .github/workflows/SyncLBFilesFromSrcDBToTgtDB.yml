@@ -15,6 +15,10 @@ on:
         - 'qa'
         - 'uat'
         default: 'dev'
+      compartment-name:
+       description: 'compartment name to create the DB '
+       required: true
+       default: thayer_dev
       db-instance-name:
         description: 'database instance name '
         required: true
@@ -30,18 +34,26 @@ on:
        
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  getcompartmentanddbinstid:
+   uses: './.github/workflows/GetCompartmentAndDBInstanceID.yml'
+   with:
+          envname: ${{ inputs.envname || 'dev' }} 
+          db-instance-name:  ${{ inputs.db-instance-name || 'Thayer_Development' }}
+          compartment-name: ${{  inputs.compartment-name || 'thayer_dev' }}
+   secrets: inherit
   devinstances:
+    needs: getcompartmentanddbinstid
     strategy:
-      matrix:
-        include: 
-        - envname: dev
-          db-instance-name: 'Thayer_Development'
-          db-instance-id: 'ocid1.autonomousdatabase.oc1.iad.anuwcljtntxkdlyambke7vkjliaugvioqteeobnp5q7vs5x6hdp56elwczla'
-        - envname: dev
-          db-instance-name: 'Thayer_Development'
-          db-instance-id: 'ocid1.autonomousdatabase.oc1.iad.anuwcljtntxkdlyambke7vkjliaugvioqteeobnp5q7vs5x6hdp56elwczla'
+     matrix:
+      include: 
+        - envname:  ${{ inputs.envname || 'dev' }} 
+          db-instance-name: ${{ inputs.db-instance-name || 'Thayer_Development' }}
+          db-instance-id: ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }}
+        - envname: ${{ inputs.envname || 'dev' }}
+          db-instance-name: ${{ inputs.db-instance-name || 'Thayer_Development' }}
+          db-instance-id: ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }}
         
-    uses: './.github/workflows/DBChangesSync.yml'
+    uses: './.github/workflows/ExecuteLBSQLCmd.yml'
     with:
       envname: '${{ matrix.envname }}'
       db-instance-name: '${{ matrix.db-instance-name }}'
