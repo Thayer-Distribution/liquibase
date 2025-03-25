@@ -33,7 +33,7 @@ on:
 
 jobs:
   getcompartmentanddbinstid:
-   uses: './.github/workflows/GetCompartmentIdandDBInstanceID.yml'
+   uses: './.github/workflows/GetCompartmentAndDBInstanceID.yml'
    with:
           envname: ${{ inputs.envname || 'dev' }} 
           db-instance-name:  ${{ github.event.inputs.db-instance-name || 'Thayer_Development' }}
