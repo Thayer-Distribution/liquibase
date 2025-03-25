@@ -92,6 +92,7 @@ jobs:
           silent: false
         
       - name: Add Source DB OCID To the Env 
+        id: getsourcedbidoutput
         if: "${{ github.event.inputs.db-instance-name != '' }}"
         env:
          srcid: ${{ steps.getsourcedbid.outputs.output }}
@@ -107,7 +108,7 @@ jobs:
           cat $GITHUB_ENV
     outputs:
       compartmentocid: ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}
-      dbinstanceocid: ${{ steps.getsourcedbid.outputs.DB_INST_ID }}
+      dbinstanceocid: ${{ steps.getsourcedbidoutput.outputs.DB_INST_ID }}
       
       
      
