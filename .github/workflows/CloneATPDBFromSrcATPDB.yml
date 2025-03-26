@@ -49,17 +49,21 @@ on:
        description: 'database cpu count '
        required: true
        default: 2
+       type: string
       dbstoragesize:
        description: 'database storage size in gb '
        required: true
+       type: string
        default: 20
       compartment-name:
        description: 'compartment name to create the DB '
        required: true
+       type: string
        default: thayer_dev
       dbinstance-toclonefrom:
        description: 'db instance to clone from '
        required: true
+       type: string
        default: Thayer_Development
       
   
