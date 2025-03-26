@@ -116,6 +116,6 @@ jobs:
         id: cloneatpdb
         with:
           command: ' oci db autonomous-database create-from-clone --clone-type ${{ inputs.dbclonetype }} --source-id  ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }} --compute-model ${{ inputs.dbcomputemodel }} --compute-count ${{ inputs.dbcpucount }} --data-storage-size-in-gbs ${{ inputs.dbstoragesize }} --admin-password ${{ secrets.DB_THAYER_DEVELOPMENT_PASSWD }} --compartment-id  ${{ needs.getcompartmentanddbinstid.outputs.compartmentocid }} --db-version ${{ inputs.dbversion }} --db-name ${{ inputs.dbname }} --display-name  ${{ inputs.dbdisplayname }}'
-          silent: true
+          silent: false
      
 
