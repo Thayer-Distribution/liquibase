@@ -48,8 +48,8 @@ jobs:
       OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
       #RUNNER_TOOL_CACHE: /thayer/envs/dev
       #AGENT_TOOLSDIRECTORY: /thayer/envs/dev
-      DB_ENV: ${{ github.event.inputs.envname || 'dev' }}
-      DB_INST: ${{ github.event.inputs.db-instance-name || 'Thayer_Development' }}
+      DB_ENV: ${{ inputs.envname || 'dev' }}
+      DB_INST: ${{ inputs.db-instance-name || 'Thayer_Development' }}
     
       OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
      
@@ -58,7 +58,7 @@ jobs:
         run: echo $GITHUB_WORKSPACE
       
       - name: Get Compartment ID the
-        if: "${{ github.event.inputs.compartment-name != '' }}"
+        if: "${{ inputs.compartment-name != '' }}"
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getcompartmentid
         with:
@@ -66,7 +66,7 @@ jobs:
           query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
           silent: false
       - name: Add Compartment OCID To the Env 
-        if: "${{ github.event.inputs.compartment-name != '' }}"
+        if: "${{ inputs.compartment-name != '' }}"
         id: compartmentocidoutput
         env:
          cmpid: ${{ steps.getcompartmentid.outputs.output }}
@@ -81,10 +81,10 @@ jobs:
           echo "retid"$retid
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_OUTPUT
-          echo "DB INSTANCE NAME****" ${{ github.event.inputs.db-instance-name }}
+          echo "DB INSTANCE NAME****" ${{ inputs.db-instance-name }}
       - name: Get Source DB ID 
        
-        if: "${{ github.event.inputs.db-instance-name != '' }}"
+        if: "${{ inputs.db-instance-name != '' }}"
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getsourcedbid
         with:
@@ -94,7 +94,7 @@ jobs:
         
       - name: Add Source DB OCID To the Env 
         id: getsourcedbidoutput
-        if: "${{ github.event.inputs.db-instance-name != '' }}"
+        if: "${{ inputs.db-instance-name != '' }}"
         env:
          srcid: ${{ steps.getsourcedbid.outputs.output }}
         run: |
