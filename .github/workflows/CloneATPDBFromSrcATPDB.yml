@@ -1,4 +1,4 @@
-name: "oci db clone "
+name: "oci-ATP-dbclone "
 on:
 
   # Allows you to run this workflow manually from the Actions tab
@@ -16,10 +16,12 @@ on:
         description: 'database name '
         required: true
         default: 'dev1'
+        type: string
       dbdisplayname:
         description: 'database display name '
         required: true
         default: 'dev2'
+        type: string
       dbclonetype:
         type: choice
         options:
@@ -48,12 +50,13 @@ on:
       dbcpucount:
        description: 'database cpu count '
        required: true
+       type: number
        default: 2
-       type: string
+       
       dbstoragesize:
        description: 'database storage size in gb '
        required: true
-       type: string
+       type: number
        default: 20
       compartment-name:
        description: 'compartment name to create the DB '
