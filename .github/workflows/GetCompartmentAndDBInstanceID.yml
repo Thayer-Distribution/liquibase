@@ -83,7 +83,6 @@ jobs:
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_OUTPUT
           echo "DB INSTANCE NAME****" ${{ inputs.db-instance-name }}
       - name: Get Source DB ID 
-       
         if: "${{ env.DB_INST != '' }}"
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getsourcedbid
