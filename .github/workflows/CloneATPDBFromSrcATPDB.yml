@@ -95,7 +95,7 @@ jobs:
     environment:  ${{
          github.ref_name == 'master' && 'dev'
          || github.ref_name == 'dev'    && 'dev'
-         || 'oracleoci'
+         || 'dev'
       }}
     name: OCI DB CLONE
     env:
