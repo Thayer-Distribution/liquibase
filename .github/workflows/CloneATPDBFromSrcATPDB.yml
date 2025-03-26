@@ -68,7 +68,7 @@ jobs:
    uses: './.github/workflows/GetCompartmentAndDBInstanceID.yml'
    with:
           envname: ${{ inputs.envname || 'dev' }} 
-          db-instance-name:  ${{ inputs.dbinstance-toclonefrom || 'Thayer_Development' }}
+          db-instance-name: ${{ inputs.dbinstance-toclonefrom || 'Thayer_Development' }}
           compartment-name: ${{  inputs.compartment-name || 'thayer_dev' }}
    secrets: inherit
   clonedb-instance:
