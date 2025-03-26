@@ -63,7 +63,7 @@ on:
        required: true
        type: string
        default: thayer_dev
-      dbinstance-toclonefrom:
+      db-instance-name:
        description: 'db instance to clone from '
        required: true
        type: string
@@ -86,7 +86,7 @@ jobs:
    uses: './.github/workflows/GetCompartmentAndDBInstanceID.yml'
    with:
           envname: ${{ inputs.envname || 'dev' }} 
-          db-instance-name: ${{ inputs.dbinstance-toclonefrom || 'Thayer_Development' }}
+          db-instance-name: ${{ inputs.db-instance-name || 'Thayer_Development' }}
           compartment-name: ${{  inputs.compartment-name || 'thayer_dev' }}
    secrets: inherit
   clonedb-instance:
