@@ -33,6 +33,10 @@ on:
       dbinstanceocid:
         description: "return db instance ocid"
         value: ${{ jobs.getcompartmentanddbinstanceid.outputs.dbinstanceocid }}
+      dbname:
+       description: "return db instance name"
+       value: ${{ jobs.getcompartmentanddbinstanceid.outputs.dbname }}
+       
      
 jobs:
   getcompartmentanddbinstanceid:
@@ -105,10 +109,14 @@ jobs:
           
           echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_ENV
           echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_OUTPUT
+          dbname=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq '.data[0]."db-name"')
+          echo "DB_NAME=$(echo $dbname)" >> $GITHUB_ENV
+          echo "DB_NAME=$(echo $dbname)" >> $GITHUB_OUTPUT
           cat $GITHUB_ENV
     outputs:
       compartmentocid: ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}
       dbinstanceocid: ${{ steps.getsourcedbidoutput.outputs.DB_INST_ID }}
+      dbname: ${{ steps.getsourcedbidoutput.outputs.DB_NAME }}
       
       
      
