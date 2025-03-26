@@ -20,7 +20,7 @@ on:
         description: 'source database instance name'
         required: true
         type: string
-        default: 'Thayer_Development'
+        default: Thayer_Development
       compartment-name:
        description: 'compartment name to retrieve the DB instance details '
        required: true
