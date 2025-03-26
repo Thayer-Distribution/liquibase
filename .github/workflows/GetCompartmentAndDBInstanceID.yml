@@ -38,7 +38,7 @@ jobs:
   getcompartmentanddbinstanceid:
     runs-on: self-hosted
     environment: ${{ inputs.envname || 'dev' }} 
-    name: GenerateDBChangeLogsUsingSqlcl
+    name: CompartmentAndDBInstIDRetrieval
     env:
       OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
       OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
