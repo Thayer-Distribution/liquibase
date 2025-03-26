@@ -97,7 +97,7 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: cloneatpdb
         with:
-          command: ' oci db autonomous-database create-from-clone --clone-type ${{ github.event.inputs.dbclonetype }} --source-id  ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }} --compute-model ${{ github.event.inputs.dbcomputemodel }} --compute-count ${{ github.event.inputs.dbcpucount }} --data-storage-size-in-gbs ${{ github.event.inputs.dbstoragesize }} --admin-password ${{ secrets.DB_PASSWD }} --compartment-id  ${{ needs.getcompartmentanddbinstid.outputs.compartmentocid }} --db-version ${{ github.event.inputs.dbversion }} --db-name ${{ github.event.inputs.dbname }} --display-name  ${{ github.event.inputs.dbdisplayname }}'
+          command: ' oci db autonomous-database create-from-clone --clone-type ${{ github.event.inputs.dbclonetype }} --source-id  ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }} --compute-model ${{ github.event.inputs.dbcomputemodel }} --compute-count ${{ github.event.inputs.dbcpucount }} --data-storage-size-in-gbs ${{ github.event.inputs.dbstoragesize }} --admin-password ${{ secrets.DB_THAYER_DEVELOPMENT_PASSWD }} --compartment-id  ${{ needs.getcompartmentanddbinstid.outputs.compartmentocid }} --db-version ${{ github.event.inputs.dbversion }} --db-name ${{ github.event.inputs.dbname }} --display-name  ${{ github.event.inputs.dbdisplayname }}'
           silent: true
      
 
