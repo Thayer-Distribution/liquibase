@@ -84,7 +84,7 @@ jobs:
           echo "DB INSTANCE NAME****" ${{ inputs.db-instance-name }}
       - name: Get Source DB ID 
        
-        if: "${{ inputs.db-instance-name != '' }}"
+        if: "${{ env.DB_INST != '' }}"
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getsourcedbid
         with:
@@ -94,7 +94,7 @@ jobs:
         
       - name: Add Source DB OCID To the Env 
         id: getsourcedbidoutput
-        if: "${{ inputs.db-instance-name != '' }}"
+        if: "${{ env.DB_INST != '' }}"
         env:
          srcid: ${{ steps.getsourcedbid.outputs.output }}
         run: |
