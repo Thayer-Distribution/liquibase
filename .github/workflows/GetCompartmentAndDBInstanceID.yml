@@ -81,6 +81,7 @@ jobs:
           echo "retid"$retid
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_OUTPUT
+          echo "DB INSTANCE NAME****" ${{ github.event.inputs.db-instance-name }}
       - name: Get Source DB ID 
        
         if: "${{ github.event.inputs.db-instance-name != '' }}"
