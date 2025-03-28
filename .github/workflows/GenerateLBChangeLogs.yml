@@ -130,16 +130,16 @@ jobs:
          TST="HI"
          echo "TST***"$TST
       
-         SCHEMACMD=$( cat << -EOF
-            set linesize 55 pages 500
-            spool output_temp.lst;
-            SET SQLFORMAT JSON-FORMATTED;
-            set head off;
-            SELECT username from all_users ;
-            set head on;
-            spool off;
-            EOF
-          )
+         SCHEMACMD=$( cat <<-EOF \n
+            set linesize 55 pages 500 \n
+            spool output_temp.lst; \n
+            SET SQLFORMAT JSON-FORMATTED; \n
+            set head off; \n
+            SELECT username from all_users ; \n
+            set head on; \n
+            spool off; \n
+            EOF  \n
+            )
          echo "SCHEMACMD***"$SCHEMACMD
           #echo "Output****\n"$SCHEMALIST
           
