@@ -130,7 +130,7 @@ jobs:
 
          {
             
-            echo "results<<EOF"
+            echo "results1<<EOF"
             echo "<<EOF"
             echo " set linesize 55 pages 500"
             echo " spool output_temp.lst;"
@@ -143,7 +143,15 @@ jobs:
             echo 'EOF' 
           } | tee -a "$GITHUB_OUTPUT"
          
-       
+          {
+         echo 'results<<EOF2'
+          "${{ secrets.SQLCL_HOME }}/bin/sql  ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ >>EOF"
+          "set linesize 55 pages 500"
+          "spool output_temp.lst;"
+          "SELECT username from all_users ;"
+          'EOF'
+          'EOF2'
+         } | tee -a "$GITHUB_OUTPUT"
       
          SCHEMACMD="<<EOF\n
             set linesize 55 pages 500\n 
@@ -168,6 +176,7 @@ jobs:
       
         run: |
          echo "output*****${{ steps.getlistofschemas.outputs.results }} "
+         eval ${{ steps.getlistofschemas.outputs.results }} 
          echo "SQLCL***"${{ secrets.SQLCL_HOME }}
          echo "SQLCLHOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
@@ -175,13 +184,7 @@ jobs:
          
          
          #echo "${{ steps.getlistofschemas.outputs.results }} " | ${{ secrets.SQLCL_HOME }}/bin/sql  ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/
-         {
-         "${{ secrets.SQLCL_HOME }}/bin/sql  ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ >>EOF"
-           echo "set linesize 55 pages 500"
-           echo "spool output_temp.lst;"
-           SELECT username from all_users ;
-         echo 'EOF'
-         }
+        
 
          
          
