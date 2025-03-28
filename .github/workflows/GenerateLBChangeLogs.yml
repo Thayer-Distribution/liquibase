@@ -141,7 +141,7 @@ jobs:
             echo 'EOF1'
             echo 'EOF' 
           } >> "$GITHUB_OUTPUT"
-         echo "results*****$result"
+         echo "results*****$results"
       
          SCHEMACMD="<<EOF\n
             set linesize 55 pages 500\n 
@@ -152,9 +152,9 @@ jobs:
             set head on;\n
             spool off;\n
             'EOF' \n"
-         SQLCMD=$(${{ secrets.SQLCL_HOME }}/bin/sql -s ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ echo -e "$SCHEMACMD")
+         #SQLCMD=$(${{ secrets.SQLCL_HOME }}/bin/sql -s ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ echo -e "$SCHEMACMD")
          
-         echo $SQLCMD
+         #echo $SQLCMD
          #${{ secrets.SQLCL_HOME }}/bin/sql -s ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ $SQLCMD
           #echo "Output****\n"$SCHEMALIST
       
@@ -165,7 +165,7 @@ jobs:
         working-directory: ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
       
         run: |
-         echo "${{ steps.getlistofschemas.outputs.output }} 
+         echo "${{ steps.getlistofschemas.outputs.results }} 
          echo "SQLCL***"${{ secrets.SQLCL_HOME }}
          echo "SQLCLHOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
