@@ -129,7 +129,7 @@ jobs:
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
         
       
-         SCHEMASLIST=$( ${{ secrets.SQLCL_HOME }}/bin/sql -s ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }} <<__EOF
+          ${{ secrets.SQLCL_HOME }}/bin/sql -s ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }} <<__EOF
             set linesize 55 pages 500
             spool output_temp.lst;
             SET SQLFORMAT JSON-FORMATTED
@@ -138,9 +138,10 @@ jobs:
             set head on;
             spool off;
             __EOF 
-            )
-          echo $SCHEMALIST 
-          echo "$SCHEMALIST"  >>  "$GITHUB_OUTPUT"
+            
+          
+          echo "Output****\n"$#
+          echo "SCHEMALIST=$#"  >>  "$GITHUB_OUTPUT"
          
       - name: 'generate changelogs for one or more schemas'
         working-directory: ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
