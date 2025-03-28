@@ -161,7 +161,7 @@ jobs:
           echo 'EOF2'
          } | tee -a "$GITHUB_OUTPUT"
 
-         SQLCMD=`${{ secrets.SQLCL_HOME }}/bin/sql  ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ <<__EOF
+         SQLCMD=`${{ secrets.SQLCL_HOME }}/bin/sql  ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ << '__EOF'
                   set linesize 55 pages 500
                   SET SQLFORMAT JSON-FORMATTED
                   spool output_temp.lst;"
@@ -170,7 +170,7 @@ jobs:
                   spool off"
                 __EOF`
 
-         echo "$SQLCMD"
+         echo "SQLCMD************\n$SQLCMD"
       
          SCHEMACMD="<<EOF\n
             set linesize 55 pages 500\n 
