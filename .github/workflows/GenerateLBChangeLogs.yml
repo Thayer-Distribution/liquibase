@@ -175,13 +175,13 @@ jobs:
          {
          echo "results<<EOF2"
          ${{ secrets.SQLCL_HOME }}/bin/sql  ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ <<-EOF
-         "set linesize 55 pages 500"
-         "spool output_temp.lst;"
-         "SET SQLFORMAT JSON-FORMATTED;"
-         set head off; 
-         SELECT username from all_users ; 
-         set head on;
-         spool off
+         echo "set linesize 55 pages 500"
+         echo "spool output_temp.lst;"
+         echo "SET SQLFORMAT JSON-FORMATTED;"
+         echo "set head off;"
+         echo "SELECT username from all_users ;"
+         echo "set head on;"
+         echo "spool off"
          echo 'EOF'
          echo 'EOF2'
          } | tee -a "$GITHUB_OUTPUT"
