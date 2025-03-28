@@ -171,9 +171,9 @@ jobs:
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
         
          {
-         echo results<<EOF
+         echo results<<EOF2
          echo ${{ secrets.SQLCL_HOME }}/bin/sql  ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/  ${{ steps.getlistofschemas.outputs.results }}
-         echo 'EOF'
+         echo 'EOF2'
          } | tee -a "$GITHUB_OUTPUT"
 
     
