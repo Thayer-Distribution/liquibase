@@ -176,7 +176,7 @@ jobs:
       
         run: |
          #echo "output*****${{ steps.getlistofschemas.outputs.results }} "
-         echo ${{ steps.getlistofschemas.outputs.results }} 
+         echo "${{ steps.getlistofschemas.outputs.results }} "
          echo "SQLCL***"${{ secrets.SQLCL_HOME }}
          echo "SQLCLHOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
