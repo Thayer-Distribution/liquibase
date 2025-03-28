@@ -119,9 +119,8 @@ jobs:
           rm -rf ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/
           mkdir -p ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
           unzip  $GITHUB_WORKSPACE/${{ env.DB_INST }}.zip -d ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/
-          
-         
-      - name: 'generate changelogs'
+      - name: 'get the list of schemas'
+        id: getlistofschemas
         working-directory: ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
       
         run: |
@@ -130,7 +129,29 @@ jobs:
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
         
       
-         echo "${{ env.LBSQLCLCMD}} " | ${{ secrets.SQLCL_HOME }}/bin/sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
+         echo "SCHEMASLIST=$( ${{ secrets.SQLCL_HOME }}/bin/sql -s ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }} <<__EOF
+            set linesize 55 pages 500
+            spool output_temp.lst;
+            SET SQLFORMAT JSON-FORMATTED
+            set head off;
+            SELECT username from dba_users WHERE default_tablespace not in ('SYSTEM','SYSAUX');;
+            set head on;
+            spool off;
+            __EOF 
+            ) >> $GITHUB_OUTPUT
+
+         
+      - name: 'generate changelogs for one or more schemas'
+        working-directory: ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
+      
+        run: |
+         echo "${{ steps.getlistofschemas.outputs.output }} 
+         echo "SQLCL***"${{ secrets.SQLCL_HOME }}
+         echo "SQLCLHOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
+         echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
+        
+      
+         #echo "${{ env.LBSQLCLCMD}} " | ${{ secrets.SQLCL_HOME }}/bin/sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
             
 
     
