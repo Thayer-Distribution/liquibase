@@ -129,7 +129,7 @@ jobs:
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
         
       
-         echo SCHEMACMD="$( cat <<-EOF
+         SCHEMACMD="$( cat <<-EOF
             set linesize 55 pages 500
             spool output_temp.lst;
             SET SQLFORMAT JSON-FORMATTED;
@@ -137,7 +137,8 @@ jobs:
             SELECT username from all_users ;
             set head on;
             spool off;
-            EOF)"
+            EOF
+          )"
          echo "SCHEMACMD***"$SCHEMACMD
           #echo "Output****\n"$SCHEMALIST
           
