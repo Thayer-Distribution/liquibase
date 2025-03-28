@@ -128,10 +128,10 @@ jobs:
          echo "SQLCLHOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
          TST="$(cat <<-EOF
-echo 'HI';
-echo 'tst';
-EOF
-)"
+          echo 'HI';
+          echo 'tst';
+          echo 'EOF'
+          )"
          echo "TST***"$TST
       
          SCHEMACMD=$( cat <<'-EOF'
