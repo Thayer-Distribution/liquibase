@@ -131,7 +131,7 @@ jobs:
          {
             
             echo "results1<<EOF"
-            echo "<<EOF"
+            echo "<<EOF2"
             echo " set linesize 55 pages 500"
             echo " spool output_temp.lst;"
             echo " SET SQLFORMAT JSON-FORMATTED;"
@@ -139,20 +139,20 @@ jobs:
             echo " SELECT username from all_users ;"
             echo " set head on;"
             echo " spool off"
-            echo "EOF"
+            echo 'EOF2'
             echo 'EOF' 
           } | tee -a "$GITHUB_OUTPUT"
          
           {
          echo 'results<<EOF2'
-          echo "  ${{ secrets.SQLCL_HOME }}/bin/sql  ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ <<'__EOF'"
+          echo "  ${{ secrets.SQLCL_HOME }}/bin/sql  ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ <<__EOF"
           echo "  set linesize 55 pages 500"
           echo "  SET SQLFORMAT JSON-FORMATTED;"
           echo "  spool output_temp.lst;"
           echo "  SELECT username from all_users ;"
           echo "  set head on;"
           echo "  spool off"
-          echo "'__EOF'"
+          echo '__EOF'
           echo 'EOF2'
          } | tee -a "$GITHUB_OUTPUT"
       
