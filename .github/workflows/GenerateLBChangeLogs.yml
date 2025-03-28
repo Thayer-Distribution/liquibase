@@ -170,7 +170,7 @@ jobs:
                 spool off"
                 __EOF`
 
-echo $SQLCMD
+         echo $SQLCMD
       
          SCHEMACMD="<<EOF\n
             set linesize 55 pages 500\n 
