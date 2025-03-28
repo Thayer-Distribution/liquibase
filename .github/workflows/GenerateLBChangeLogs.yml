@@ -149,9 +149,9 @@ jobs:
           echo "  set linesize 55 pages 500"
           echo "  spool output_temp.lst;"
           echo "  SELECT username from all_users ;"
-          echo " set head on;"
-          echo " spool off"
-          echo "'__EOF'"
+          echo "  set head on;"
+          echo "  spool off"
+          echo "__EOF"
           echo 'EOF2'
          } | tee -a "$GITHUB_OUTPUT"
       
@@ -178,7 +178,9 @@ jobs:
       
         run: |
          echo "output*****${{ steps.getlistofschemas.outputs.results }} "
+         echo "**********INBETWEEN***********"
          eval "${{ steps.getlistofschemas.outputs.results }} "
+         echo "DONE"
          echo "SQLCL***"${{ secrets.SQLCL_HOME }}
          echo "SQLCLHOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
