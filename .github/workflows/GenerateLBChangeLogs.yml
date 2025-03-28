@@ -25,11 +25,17 @@ on:
        description: 'compartment name to create the DB '
        required: true
        default: thayer_dev
-      lbsqlclcmd:
-        description: 'exact sqlcl lb command to execute '
+      dbschemastogeneratecl:
+        description: 'list of comma seperated schemas to generate the changelogs'
         required: false
         type: string
-        default: 'lb generate-changelog -output-file controller.xml'
+        default: 'xml'
+      changelogformat:
+        description: 'what format changelog need to be generated'
+        required: false
+        type: string
+        default: 'xml'
+      
 
 jobs:
   getcompartmentanddbinstid:
@@ -62,7 +68,8 @@ jobs:
       DB_WALLET_PASSWD: ${{ format('DB_{0}_WALLETPASSWD',github.event.inputs.db-instance-name || 'thayerdev') }}
       DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',github.event.inputs.db-instance-name || 'thayerdev' ) }}
       OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
-      LBSQLCLCMD: ${{  inputs.lbsqlclcmd || 'lb generate-changelog -output-file tstschema.xml' }}
+      SCHEMASLIST: ${{  inputs.dbschemastogeneratecl || ${{ vars.LISTOFSCHEMAS }}
+      LBSQLCLCMD: "lb generate-changelog -output-file tstschema.${{ inputs.dbschemastogeneratecl' || 'xml' }}"
      
     steps:
       - name: Workspace Location
