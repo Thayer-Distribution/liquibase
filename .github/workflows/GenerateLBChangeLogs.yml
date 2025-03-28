@@ -129,7 +129,7 @@ jobs:
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
         
       
-         SCHEMALIST="$(${{ secrets.SQLCL_HOME }}/bin/sql -s ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }} <<__EOF
+         echo SCHEMACMD="$( cat <<-EOF
             set linesize 55 pages 500
             spool output_temp.lst;
             SET SQLFORMAT JSON-FORMATTED;
@@ -137,9 +137,8 @@ jobs:
             SELECT username from all_users ;
             set head on;
             spool off;
-            __EOF 
-            )"
-          
+            EOF)"
+         echo "SCHEMACMD***"$SCHEMACMD
           #echo "Output****\n"$SCHEMALIST
           
          
