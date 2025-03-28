@@ -141,18 +141,10 @@ jobs:
               mkdir -p ${i}
             done
 
-      
-     
-         
-
       - name: 'generate changelogs for one or more schemas'
         working-directory: ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
       
-        run: |
-         
-         
-    
-    
+        run: |    
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
          IFS="," read -a schemaslist <<< ${{ env.SCHEMASLIST }}
             for i in "${schemaslist[@]}"; do
@@ -161,10 +153,6 @@ jobs:
               cd ${i}
               
               echo "ALTER session set current_schema=${i}; ${{ env.LBSQLCLCMD}} " | ${{ secrets.SQLCL_HOME }}/bin/sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
-            
-
-    
-              
             done
 
          
