@@ -156,6 +156,7 @@ jobs:
          IFS="," read -a schemaslist <<< ${{ vars.LISTOFSCHEMAS }}
             for i in "${schemaslist[@]}"; do
               echo "Value: ${i}"
+              ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
               cd ${i}
               
               echo "alter session set current_schema='${i}'; ${{ env.LBSQLCLCMD}} " | ${{ secrets.SQLCL_HOME }}/bin/sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
