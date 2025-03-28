@@ -132,13 +132,13 @@ jobs:
             
             echo "results<<EOF"
             echo "<<EOF"
-            echo set linesize 55 pages 500
-            echo spool output_temp.lst;
-            echo SET SQLFORMAT JSON-FORMATTED;
-            echo set head off; 
-            echo SELECT username from all_users ; 
-            echo set head on;
-            echo spool off
+            echo " set linesize 55 pages 500"
+            echo " spool output_temp.lst;"
+            echo " SET SQLFORMAT JSON-FORMATTED;"
+            echo " set head off;"
+            echo " SELECT username from all_users ;"
+            echo " set head on;"
+            echo " spool off"
             echo '"EOF"'
             echo 'EOF' 
           } | tee -a "$GITHUB_OUTPUT"
