@@ -168,7 +168,8 @@ jobs:
                   SELECT username from all_users ;
                   set head on;
                   spool off"
-                  EOF`
+                  EOF
+                  `
 
          echo "SQLCMD************\n$SQLCMD"
       
