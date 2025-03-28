@@ -157,7 +157,7 @@ jobs:
           echo "  SELECT username from all_users ;"
           echo "  set head on;"
           echo "  spool off"
-          echo '  __EOF'
+          echo '__EOF'
           echo 'EOF2'
          } | tee -a "$GITHUB_OUTPUT"
 
@@ -171,7 +171,7 @@ jobs:
                   EOF
                   "`
 
-         echo "SQLCMD************\n$SQLCMD"
+         #echo "SQLCMD************\n$SQLCMD"
       
          SCHEMACMD="<<EOF\n
             set linesize 55 pages 500\n 
