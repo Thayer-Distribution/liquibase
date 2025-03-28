@@ -145,7 +145,7 @@ jobs:
          
           {
          echo 'results<<EOF2'
-          "${{ secrets.SQLCL_HOME }}/bin/sql  ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ >>EOF"
+          "${{ secrets.SQLCL_HOME }}/bin/sql  ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ <<EOF"
           "set linesize 55 pages 500"
           "spool output_temp.lst;"
           "SELECT username from all_users ;"
