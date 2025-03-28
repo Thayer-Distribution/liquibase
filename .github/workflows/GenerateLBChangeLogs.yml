@@ -134,7 +134,7 @@ jobs:
          echo "SQLCL***"${{ secrets.SQLCL_HOME }}
          echo "SQLCLHOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
-         IFS="," read -a schemaslist <<< ${{ vars.LISTOFSCHEMAS }}
+         IFS="," read -a schemaslist <<< ${{ env.SCHEMASLIST }}
             for i in "${schemaslist[@]}"; do
               echo "Value: ${i}"
               rm -rf ${i}
