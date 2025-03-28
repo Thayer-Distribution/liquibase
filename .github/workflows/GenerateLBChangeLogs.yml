@@ -152,8 +152,8 @@ jobs:
           echo "  SELECT username from all_users ;"
           echo "  set head on;"
           echo "  spool off"
-          echo "__EOF"
-          echo 'EOF2'
+          echo __EOF
+          echo "EOF2"
          } | tee -a "$GITHUB_OUTPUT"
       
          SCHEMACMD="<<EOF\n
