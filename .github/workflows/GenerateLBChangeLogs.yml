@@ -166,7 +166,7 @@ jobs:
          SELECT username from all_users ; 
          set head on;
          spool off
-         'EOF'
+         echo 'EOF'
          echo 'EOF2'
          } | tee -a "$GITHUB_OUTPUT"
 
