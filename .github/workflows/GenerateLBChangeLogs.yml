@@ -133,18 +133,7 @@ jobs:
           EOF\n"
          echo -e "TST***"$TST
       
-         SCHEMACMD=$( cat <<'-EOF'
-            set linesize 55 pages 500 
-            spool output_temp.lst; 
-            SET SQLFORMAT JSON-FORMATTED; 
-            set head off; 
-            SELECT username from all_users ; 
-            set head on;
-            spool off;
-            'EOF' 
-            )
-         echo "SCHEMACMD***"$SCHEMACMD
-          #echo "Output****\n"$SCHEMALIST
+         
           
          
       - name: 'generate changelogs for one or more schemas'
