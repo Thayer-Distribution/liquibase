@@ -68,8 +68,8 @@ jobs:
       DB_WALLET_PASSWD: ${{ format('DB_{0}_WALLETPASSWD',github.event.inputs.db-instance-name || 'thayerdev') }}
       DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',github.event.inputs.db-instance-name || 'thayerdev' ) }}
       OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
-      SCHEMASLIST: ${{  inputs.dbschemastogeneratecl || ${{ vars.LISTOFSCHEMAS }}
-      LBSQLCLCMD: "lb generate-changelog -output-file tstschema.${{ inputs.dbschemastogeneratecl' || 'xml' }}"
+      SCHEMASLIST: ${{  inputs.dbschemastogeneratecl ||  vars.LISTOFSCHEMAS }}
+      LBSQLCLCMD: "lb generate-changelog -output-file tstschema.${{ inputs.dbschemastogeneratecl || 'xml' }}"
      
     steps:
       - name: Workspace Location
