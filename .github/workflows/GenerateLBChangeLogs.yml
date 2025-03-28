@@ -137,7 +137,7 @@ jobs:
             SELECT username from all_users ;
             set head on;
             spool off;
-            __EOF 
+          __EOF 
             
           
           echo "Output****\n"$#
