@@ -139,7 +139,7 @@ jobs:
             echo " SELECT username from all_users ;"
             echo " set head on;"
             echo " spool off"
-            echo '"EOF"'
+            echo "EOF"
             echo 'EOF' 
           } | tee -a "$GITHUB_OUTPUT"
          
