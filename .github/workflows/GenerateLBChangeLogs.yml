@@ -29,12 +29,12 @@ on:
         description: 'list of comma seperated schemas to generate the changelogs'
         required: false
         type: string
-        default: 'xml'
+        default: 'PICASSO,IMAGE_STORE'
       changelogformat:
         description: 'what format changelog need to be generated'
         required: false
         type: string
-        default: 'xml'
+        default: 'sql'
       
 
 jobs:
