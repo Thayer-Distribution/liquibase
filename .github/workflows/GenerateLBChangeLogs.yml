@@ -127,21 +127,7 @@ jobs:
          echo "SQLCL***"${{ secrets.SQLCL_HOME }}
          echo "SQLCLHOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
-         {
-            
-            echo "results<<EOF"
-            echo "<<EOF"
-            echo set linesize 55 pages 500
-            echo spool output_temp.lst;
-            echo SET SQLFORMAT JSON-FORMATTED;
-            echo set head off; 
-            echo SELECT username from all_users ; 
-            echo set head on;
-            echo spool off
-            echo '"EOF"'
-            echo 'EOF' 
-          } | tee -a "$GITHUB_OUTPUT"
-         
+       
       
          SCHEMACMD="<<EOF\n
             set linesize 55 pages 500\n 
@@ -165,23 +151,22 @@ jobs:
         working-directory: ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
       
         run: |
-         echo "${{ steps.getlistofschemas.outputs.results }} "
+         #echo "${{ steps.getlistofschemas.outputs.results }} "
          echo "SQLCL***"${{ secrets.SQLCL_HOME }}
          echo "SQLCLHOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
         
          {
-         echo results<<EOF2
-        
-         echo ${{ secrets.SQLCL_HOME }}/bin/sql  ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/  ${{ steps.getlistofschemas.outputs.results }} <<EOF
-         echo set linesize 55 pages 500
-         echo spool output_temp.lst;
-         echo SET SQLFORMAT JSON-FORMATTED;
-         echo set head off; 
-         echo SELECT username from all_users ; 
-         echo set head on;
-         echo spool off
-         echo 'EOF'
+         echo "results<<EOF2"
+         ${{ secrets.SQLCL_HOME }}/bin/sql  ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/  ${{ steps.getlistofschemas.outputs.results }} <<EOF"
+         "set linesize 55 pages 500"
+         "spool output_temp.lst;"
+         "SET SQLFORMAT JSON-FORMATTED;"
+         set head off; 
+         SELECT username from all_users ; 
+         set head on;
+         spool off
+         'EOF'
          echo 'EOF2'
          } | tee -a "$GITHUB_OUTPUT"
 
