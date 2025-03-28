@@ -119,67 +119,26 @@ jobs:
           rm -rf ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/
           mkdir -p ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
           unzip  $GITHUB_WORKSPACE/${{ env.DB_INST }}.zip -d ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/
-      - name: 'get the list of schemas'
-        id: getlistofschemas
+      - name: 'create and cleanup the schema dirs'
+        id: createandcleanschemadirs
         working-directory: ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
-        shell: bash
+        
         run: |
          echo "SQLCL***"${{ secrets.SQLCL_HOME }}
          echo "SQLCLHOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
+         IFS="," read -a schemaslist <<< ${{ env.LISTOFSCHEMAS }}
+            for i in "${schemaslist[@]}"; do
+              echo "Value: ${i}"
+              rm -rf ${i}
+              mkdir -p ${i}
+            done
 
-         {
-            echo 'FOOBAR<<EOF'
-            for i in {1..5}; do echo $i; done
-            echo 'EOF'
-         } | tee -a "$GITHUB_OUTPUT"
-         {
-            
-            echo "results1<<EOF"
-            echo "<<EOF2"
-            echo " set linesize 55 pages 500"
-            echo " spool output_temp.lst;"
-            echo " SET SQLFORMAT JSON-FORMATTED;"
-            echo " set head off;"
-            echo " SELECT username from all_users ;"
-            echo " set head on;"
-            echo " spool off"
-            echo 'EOF2'
-            echo 'EOF' 
-          } | tee -a "$GITHUB_OUTPUT"
-           echo "FOOBAR***\n$FOOBAR"
-          {
-         echo 'results<<EOF2'
-          echo "  ${{ secrets.SQLCL_HOME }}/bin/sql  ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ <<__EOF"
-          echo "  set linesize 55 pages 500"
-          echo "  SET SQLFORMAT JSON-FORMATTED;"
-          echo "  spool output_temp.lst;"
-          echo "  SELECT username from all_users ;"
-          echo "  set head on;"
-          echo "  spool off"
-          echo '__EOF'
-          echo 'EOF2'
-         } | tee -a "$GITHUB_OUTPUT"
-
-        
-
-         #echo "SQLCMD************\n$SQLCMD"
       
-         SCHEMACMD="<<EOF\n
-            set linesize 55 pages 500\n 
-            spool output_temp.lst; \n
-            SET SQLFORMAT JSON-FORMATTED;\n 
-            set head off; \n
-            SELECT username from all_users ; \n
-            set head on;\n
-            spool off;\n
-            'EOF' \n"
-         #SQLCMD=$(${{ secrets.SQLCL_HOME }}/bin/sql -s ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ echo -e "$SCHEMACMD")
+     
          
-         #echo $SQLCMD
-         #${{ secrets.SQLCL_HOME }}/bin/sql -s ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ $SQLCMD
-          #echo "Output****\n"$SCHEMALIST
-      
+ 
+         
          
           
          
