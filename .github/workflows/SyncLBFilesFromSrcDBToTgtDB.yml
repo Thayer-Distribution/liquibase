@@ -16,11 +16,11 @@ on:
         - 'uat'
         default: 'dev'
       compartment-name:
-       description: 'compartment name to create the DB '
+       description: 'compartment name of the target DB '
        required: true
        default: thayer_dev
       db-instance-name:
-        description: 'database instance name '
+        description: 'target database instance name '
         required: true
         default: 'Thayer_Development'
       
