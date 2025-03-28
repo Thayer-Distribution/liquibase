@@ -142,8 +142,8 @@ jobs:
             set head on;\n
             spool off;\n
             'EOF' \n"
-         echo -e "SCHEMACMD***"$SCHEMACMD
-         ${{ secrets.SQLCL_HOME }}/bin/sql -s ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ echo -e $SCHEMACMD
+         SQLCMD=$(echo -e $SCHEMACMD)
+         ${{ secrets.SQLCL_HOME }}/bin/sql -s ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/ $SQLCMD
           #echo "Output****\n"$SCHEMALIST
       
          
