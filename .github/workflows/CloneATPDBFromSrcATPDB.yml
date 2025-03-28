@@ -108,7 +108,7 @@ jobs:
       #OCI_COMPARTMENT_ID: ${{ format('DB_{0}_USER', inputs.db-instance-name || 'thayeratp' ) }}
       OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
       CLONEFROM_DB_INSTANCE: ${{  inputs.dbinstance-toclonefrom || 'Thayer_Development' }}
-      NSGID: '[ocid1.networksecuritygroup.oc1.iad.aaaaaaaaphbtttjlxe6dkuuv5lcyb77jlynahuavislaia5eynn2dp6dawra]'
+      NSGID: '["ocid1.networksecuritygroup.oc1.iad.aaaaaaaaphbtttjlxe6dkuuv5lcyb77jlynahuavislaia5eynn2dp6dawra"]'
   
    
     steps:
@@ -117,7 +117,7 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: cloneatpdb
         with:
-          command: "oci db autonomous-database create-from-clone --clone-type ${{ inputs.dbclonetype }} --source-id  ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }} --compute-model ${{ inputs.dbcomputemodel }} --compute-count ${{ inputs.dbcpucount }} --data-storage-size-in-gbs ${{ inputs.dbstoragesize }} --admin-password ${{ secrets.DB_THAYER_DEVELOPMENT_PASSWD }} --compartment-id  ${{ needs.getcompartmentanddbinstid.outputs.compartmentocid }} --db-version ${{ inputs.dbversion }} --db-name ${{ inputs.dbname }} --display-name  ${{ inputs.dbdisplayname }} --nsg-ids '${{ \"env.NSGID\" }}' "
+          command: "oci db autonomous-database create-from-clone --clone-type ${{ inputs.dbclonetype }} --source-id  ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }} --compute-model ${{ inputs.dbcomputemodel }} --compute-count ${{ inputs.dbcpucount }} --data-storage-size-in-gbs ${{ inputs.dbstoragesize }} --admin-password ${{ secrets.DB_THAYER_DEVELOPMENT_PASSWD }} --compartment-id  ${{ needs.getcompartmentanddbinstid.outputs.compartmentocid }} --db-version ${{ inputs.dbversion }} --db-name ${{ inputs.dbname }} --display-name  ${{ inputs.dbdisplayname }} --nsg-ids '${{ env.NSGID }}' "
           silent: false
      
 
