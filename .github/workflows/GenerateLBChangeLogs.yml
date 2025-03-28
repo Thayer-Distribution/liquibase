@@ -69,7 +69,7 @@ jobs:
       DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',github.event.inputs.db-instance-name || 'thayerdev' ) }}
       OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
       SCHEMASLIST: ${{  inputs.dbschemastogeneratecl ||  vars.LISTOFSCHEMAS }}
-      LBSQLCLCMD: "lb generate-changelog -output-file tstschema.${{ inputs.dbschemastogeneratecl || 'xml' }}"
+      LBSQLCLCMD: "lb generate-changelog -output-file controller.${{ inputs.changelogformat || 'xml' }}"
      
     steps:
       - name: Workspace Location
