@@ -129,6 +129,11 @@ jobs:
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
 
          {
+            echo 'FOOBAR<<EOF'
+            for i in {1..5}; do echo $i; done
+            echo 'EOF'
+         } | tee -a "$GITHUB_OUTPUT"
+         {
             
             echo "results1<<EOF"
             echo "<<EOF2"
@@ -152,7 +157,7 @@ jobs:
           echo "  SELECT username from all_users ;"
           echo "  set head on;"
           echo "  spool off"
-          echo '__EOF'
+          echo '  __EOF'
           echo 'EOF2'
          } | tee -a "$GITHUB_OUTPUT"
       
