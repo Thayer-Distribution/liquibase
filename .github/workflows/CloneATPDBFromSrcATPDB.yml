@@ -81,7 +81,7 @@ jobs:
          echo "innst name***" ${{ inputs.dbinstance-toclonefrom }}
          echo " comp name***" ${{ inputs.compartment-name }}
          echo "env name***" ${{ inputs.envname }}
-         echo "'[\"ocid1.networksecuritygroup.oc1.iad.aaaaaaaaphbtttjlxe6dkuuv5lcyb77jlynahuavislaia5eynn2dp6dawra\"]'" > nsgid.json
+         echo "[\"ocid1.networksecuritygroup.oc1.iad.aaaaaaaaphbtttjlxe6dkuuv5lcyb77jlynahuavislaia5eynn2dp6dawra\"]" > nsgid.json
     
   getcompartmentanddbinstid:
    uses: './.github/workflows/GetCompartmentAndDBInstanceID.yml'
