@@ -127,11 +127,11 @@ jobs:
          echo "SQLCL***"${{ secrets.SQLCL_HOME }}
          echo "SQLCLHOME=${{ secrets.SQLCL_HOME }}/" >> "$GITHUB_ENV"
          echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
-         TST="cat <<EOF '\n'
-          echo 'HI'; '\n'
-          echo 'tst'; '\n'
-          EOF'\n'"
-         echo "TST***"$TST
+         TST="cat <<EOF \n
+          echo 'HI'; \n
+          echo 'tst'; \n
+          EOF\n"
+         echo -e "TST***"$TST
       
          SCHEMACMD=$( cat <<'-EOF'
             set linesize 55 pages 500 
