@@ -138,7 +138,7 @@ jobs:
             set head on;
             spool off;
             __EOF 
-            ) >> $GITHUB_OUTPUT
+            )" >> $GITHUB_OUTPUT
 
          
       - name: 'generate changelogs for one or more schemas'
