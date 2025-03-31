@@ -8,7 +8,7 @@ on:
     inputs:
       envname:
         type: choice
-        description: 'target environment name '
+        description: 'Target Environment Name of the Database '
         required: true
         options:
         - 'dev'
@@ -16,16 +16,16 @@ on:
         - 'uat'
         default: 'dev'
       compartment-name:
-       description: 'compartment name of the target DB '
+       description: 'Compartment Name of the target DB '
        required: true
        default: thayer_dev
       db-instance-name:
-        description: 'target database instance name '
+        description: 'Target Database instance display name '
         required: true
         default: 'Thayer_Development'
       
       sqlcltag:
-        description: 'tag name to use '
+        description: 'Tag name to use '
         required: false
         default: 'basev1'
        
