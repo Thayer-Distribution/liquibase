@@ -109,7 +109,7 @@ jobs:
       #OCI_COMPARTMENT_ID: ${{ format('DB_{0}_USER', inputs.db-instance-name || 'thayeratp' ) }}
       OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
       CLONEFROM_DB_INSTANCE: ${{  inputs.dbinstance-toclonefrom || 'Thayer_Development' }}
-      NSGID: '["ocid1.networksecuritygroup.oc1.iad.aaaaaaaaphbtttjlxe6dkuuv5lcyb77jlynahuavislaia5eynn2dp6dawra"]'
+      NSGID: '{ nsgId: "ocid1.networksecuritygroup.oc1.iad.aaaaaaaaphbtttjlxe6dkuuv5lcyb77jlynahuavislaia5eynn2dp6dawra" }'
   
    
     steps:
