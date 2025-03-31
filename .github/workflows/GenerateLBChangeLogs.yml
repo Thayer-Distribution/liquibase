@@ -12,26 +12,26 @@ on:
   workflow_dispatch:
    inputs:
       envname:
-        description: 'source database env name'
+        description: 'Environment name of Source Database'
         required: true
         type: string
         default: dev
       db-instance-name:
-        description: 'source database instance name to clone from'
+        description: 'Source Database Instance Display Name'
         required: true
         type: string
         default: 'Thayer_Development'
       compartment-name:
-       description: 'compartment name to create the DB '
+       description: 'Compartment of the Source Database'
        required: true
        default: thayer_dev
       dbschemastogeneratecl:
-        description: 'list of comma seperated schemas to generate the changelogs'
+        description: 'List of comma seperated schemas to generate the changelogs'
         required: false
         type: string
         default: 'PICASSO,IMAGE_STORE'
       changelogformat:
-        description: 'what format changelog need to be generated'
+        description: 'ChangeLog format like sql,json etc'
         required: false
         type: string
         default: 'sql'
