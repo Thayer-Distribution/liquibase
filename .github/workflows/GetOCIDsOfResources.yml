@@ -1,4 +1,4 @@
-name: "GetCompartmentIdandDBInstanceID"
+name: "GetOCIDOfResources"
 on:
 #  schedule:
 #    - cron: '*/5 * * * *'
