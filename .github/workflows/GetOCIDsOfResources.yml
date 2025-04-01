@@ -23,9 +23,14 @@ on:
         default: Thayer_Development
       compartment-name:
        description: 'compartment name to retrieve the DB instance details '
-       required: false
+       required: true
        type: string
        default: thayer_dev
+      db-subnet-name:
+       description: 'DB Instance VCN subnet name '
+       required: false
+       type: string
+       default: ""
       nsg-name:
        description: 'Get NSG ID based on nsg id  '
        required: false
@@ -49,6 +54,9 @@ on:
       nsgid:
        description: "return nsg id"
        value: ${{ jobs.getcompartmentanddbinstanceid.outputs.nsgid }}
+      subnetid:
+       description: "return subnet id"
+       value: ${{ jobs.getcompartmentanddbinstanceid.outputs.subnetid }}
        
      
 jobs:
@@ -71,6 +79,7 @@ jobs:
       OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
       NSG_NAME: ${{ inputs.nsg-name || 'thayerdev_nsg' }}
       NSG_CMPID: ${{ inputs.nsg-compartmentid || 'OCI_USEast_Thayer_Core_Infra' }}
+      SUBNET_NAME: ${{ inputs.db-subnet-name || 'thayer_dev_net' }}
      
     steps:
       - name: Workspace Location
@@ -128,13 +137,37 @@ jobs:
           echo "DB_NAME=$(echo $dbname)" >> $GITHUB_ENV
           echo "DB_NAME=$(echo $dbname)" >> $GITHUB_OUTPUT
           cat $GITHUB_ENV
+      - name: Get SUBNET ID 
+        if: "${{ inputs.subnet-name != '' }}"
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        id: getsubnetid
+        with:
+          command: ' oci  network subnet  list --compartment-id ${{ env.DB_COMPARTMENTID }}  --display-name ${{ env.SUBNET_NAME }}'
+          #query: "data[?name=='${{ env.NAME }}'].id"
+          silent: false
+      - name: Add SUBNET OCID To the Env 
+        id: getsubnetdetails
+        if: "${{ inputs.subnet-name != '' }}"
+        env:
+         subnetid: ${{ steps.getsubnetid.outputs.output }}
+        run: |
+         
+          echo "subnet***"$subnetid 
+          #cat $GITHUB_OUTPUT
+          echo ${{ steps.subnetid.outputs.output }} | jq .data[0].id
+          retid=$(echo ${{ steps.submetid.outputs.output }} | jq .data[0].id)
+          
+          echo "SUBNET_ID=$(echo $retid)" >> $GITHUB_ENV
+          echo "SUBNET_ID=$(echo $retid)" >> $GITHUB_OUTPUT
+          
+          cat $GITHUB_ENV
       - name: Get NSG ID 
         if: "${{ inputs.nsg-name != '' }}"
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getnsgid
         with:
-          command: ' oci  network nsg  list '
-          query: "data[?name=='${{ env.NSG_NAME }}'].id"
+          command: ' oci  network nsg  list --compartment-id ${{ env.NSG_CMPID }}  --display-name ${{ env.NSG_NAME }} '
+          #query: "data[?name=='${{ env.NSG_NAME }}'].id"
           silent: false
       - name: Add NSG OCID To the Env 
         id: getnsgdetails
@@ -157,6 +190,7 @@ jobs:
       dbinstanceocid: ${{ steps.getsourcedbidoutput.outputs.DB_INST_ID }}
       dbname: ${{ steps.getsourcedbidoutput.outputs.DB_NAME }}
       nsgid: ${{ steps.getsourcedbidoutput.outputs.NSG_ID }}
+      subnetid: ${{ steps.getsourcedbidoutput.outputs.SUBNET_ID }}
       
       
      
