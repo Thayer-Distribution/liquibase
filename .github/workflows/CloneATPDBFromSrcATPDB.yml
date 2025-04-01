@@ -68,6 +68,16 @@ on:
        required: true
        type: string
        default: Thayer_Development
+      nsg-name:
+       description: 'nsg name to assoicate the DB Instance with'
+       required: true
+       type: string
+       default: thayerdev_nsg
+      nsg-cmpname:
+       description: 'Compartment name of the NSG'
+       required: true
+       type: string
+       default: 'OCI_USEast_Thayer_Core_Infra'
       
   
 jobs:
@@ -92,10 +102,32 @@ jobs:
           envname: ${{ inputs.envname || 'dev' }} 
           db-instance-name: ${{ inputs.db-instance-name || 'Thayer_Development' }}
           compartment-name: ${{  inputs.compartment-name || 'thayer_dev' }}
+  getnsgcmpid:
+   uses: './.github/workflows/GetOCIDsOfResources.yml'
+   with:
+          envname: ${{ inputs.envname || 'dev' }} 
+          
+          compartment-name: ${{  inputs.nsg-cmpname || 'OCI_USEast_Thayer_Core_Infra' }}
+          
+   secrets: inherit
+  getsubnetid:
+   uses: './.github/workflows/GetOCIDsOfResources.yml'
+   with:
+          envname: ${{ inputs.envname || 'dev' }} 
+          compartment-name: ${{  inputs.compartment-name || 'OCI_USEast_Thayer_Core_Infra' }}
+   secrets: inherit
+  getresourceids:
+   uses: './.github/workflows/GetOCIDsOfResources.yml'
+   needs: getnsgcmpid
+   with:
+          envname: ${{ inputs.envname || 'dev' }} 
+          nsg-name: ${{  inputs.nsg-name || 'thayerdev_nsg' }}
+          nsg-cmpid: ${{  needs.getnsgcmpid.outputs.compartmentocid }}  || 'OCI_USEast_Thayer_Core_Infra' }}
+                    
    secrets: inherit
   clonedb-instance:
     runs-on: self-hosted
-    needs: getcompartmentanddbinstid
+    needs: [getcompartmentanddbinstid, getresourceids, getsubnetid]
     environment:  ${{
          github.ref_name == 'master' && 'dev'
          || github.ref_name == 'dev'    && 'dev'
@@ -112,7 +144,8 @@ jobs:
       #OCI_COMPARTMENT_ID: ${{ format('DB_{0}_USER', inputs.db-instance-name || 'thayeratp' ) }}
       OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
       CLONEFROM_DB_INSTANCE: ${{  inputs.dbinstance-toclonefrom || 'Thayer_Development' }}
-      NSGID: '{ \"nsgId\": \"ocid1.networksecuritygroup.oc1.iad.aaaaaaaaphbtttjlxe6dkuuv5lcyb77jlynahuavislaia5eynn2dp6dawra\" }'
+      NSGID: "${{  needs.getresourceids.outputs.nsgid  }} "
+      SUBNETID: "${{  needs.getsubnetid.outputs.subnetid  }} "
   
    
     steps:
@@ -121,7 +154,7 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: cloneatpdb
         with:
-          command: "oci db autonomous-database create-from-clone --clone-type ${{ inputs.dbclonetype }} --source-id  ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }} --compute-model ${{ inputs.dbcomputemodel }} --compute-count ${{ inputs.dbcpucount }} --data-storage-size-in-gbs ${{ inputs.dbstoragesize }} --admin-password ${{ secrets.DB_THAYER_DEVELOPMENT_PASSWD }} --compartment-id  ${{ needs.getcompartmentanddbinstid.outputs.compartmentocid }} --db-version ${{ inputs.dbversion }} --db-name ${{ inputs.dbname }} --display-name  ${{ inputs.dbdisplayname }} --nsg-ids file://nsgid.json "
+          command: "oci db autonomous-database create-from-clone --clone-type ${{ inputs.dbclonetype }} --source-id  ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }} --compute-model ${{ inputs.dbcomputemodel }} --compute-count ${{ inputs.dbcpucount }} --data-storage-size-in-gbs ${{ inputs.dbstoragesize }} --admin-password ${{ secrets.DB_THAYER_DEVELOPMENT_PASSWD }} --compartment-id  ${{ needs.getcompartmentanddbinstid.outputs.compartmentocid }} --db-version ${{ inputs.dbversion }} --db-name ${{ inputs.dbname }} --display-name  ${{ inputs.dbdisplayname }} --nsg-ids ${{ env.NSGID }} --subnet-id ${{ env.SUBNETID }} "
           silent: false
      
 
