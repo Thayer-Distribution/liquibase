@@ -68,6 +68,11 @@ on:
        required: true
        type: string
        default: Thayer_Development
+      db-subnet-name:
+       description: 'db instance vcn subnet name '
+       required: true
+       type: string
+       default: thayer_dev_net
       nsg-name:
        description: 'nsg name to assoicate the DB Instance with'
        required: true
@@ -115,6 +120,7 @@ jobs:
    with:
           envname: ${{ inputs.envname || 'dev' }} 
           compartment-name: ${{  inputs.compartment-name || 'OCI_USEast_Thayer_Core_Infra' }}
+          db-subnet-name: ${{  inputs.db-subnet-name || 'thayer_dev_net' }}
    secrets: inherit
   getresourceids:
    uses: './.github/workflows/GetOCIDsOfResources.yml'
