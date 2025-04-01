@@ -87,7 +87,7 @@ jobs:
         #     }" > nsgid.json
     
   getcompartmentanddbinstid:
-   uses: './.github/workflows/GetCompartmentAndDBInstanceID.yml'
+   uses: './.github/workflows/GetOCIDsOfResources.yml'
    with:
           envname: ${{ inputs.envname || 'dev' }} 
           db-instance-name: ${{ inputs.db-instance-name || 'Thayer_Development' }}
