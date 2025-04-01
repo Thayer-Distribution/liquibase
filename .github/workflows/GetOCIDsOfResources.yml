@@ -18,14 +18,24 @@ on:
         default: dev
       db-instance-name:
         description: 'source database instance name'
-        required: true
+        required: false
         type: string
         default: Thayer_Development
       compartment-name:
        description: 'compartment name to retrieve the DB instance details '
-       required: true
+       required: false
        type: string
        default: thayer_dev
+      nsg-name:
+       description: 'Get NSG ID based on nsg id  '
+       required: false
+       type: string
+       default: ""
+      nsg-compartmentid:
+       description: 'Get NSG compartment ID  '
+       required: false
+       type: string
+       default: ""
    outputs:
       compartmentocid:
         description: "return compartment ocid"
@@ -36,6 +46,9 @@ on:
       dbname:
        description: "return db instance name"
        value: ${{ jobs.getcompartmentanddbinstanceid.outputs.dbname }}
+      nsgid:
+       description: "return nsg id"
+       value: ${{ jobs.getcompartmentanddbinstanceid.outputs.nsgid }}
        
      
 jobs:
@@ -54,8 +67,10 @@ jobs:
       #AGENT_TOOLSDIRECTORY: /thayer/envs/dev
       DB_ENV: ${{ inputs.envname || 'dev' }}
       DB_INST: ${{ inputs.db-instance-name || 'Thayer_Development' }}
-    
+      
       OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
+      NSG_NAME: ${{ inputs.nsg-name || 'thayerdev_nsg' }}
+      NSG_CMPID: ${{ inputs.nsg-compartmentid || 'OCI_USEast_Thayer_Core_Infra' }}
      
     steps:
       - name: Workspace Location
@@ -113,10 +128,35 @@ jobs:
           echo "DB_NAME=$(echo $dbname)" >> $GITHUB_ENV
           echo "DB_NAME=$(echo $dbname)" >> $GITHUB_OUTPUT
           cat $GITHUB_ENV
+      - name: Get NSG ID 
+        if: "${{ inputs.nsg-name != '' }}"
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        id: getnsgid
+        with:
+          command: ' oci  network nsg  list '
+          query: "data[?name=='${{ env.NSG_NAME }}'].id"
+          silent: false
+      - name: Add NSG OCID To the Env 
+        id: getnsgdetails
+        if: "${{ inputs.nsg-name != '' }}"
+        env:
+         nsgid: ${{ steps.getnsgid.outputs.output }}
+        run: |
+         
+          echo "nsg***"$nsgid 
+          #cat $GITHUB_OUTPUT
+          echo ${{ steps.nsgid.outputs.output }} | jq .data[0].id
+          retid=$(echo ${{ steps.nsgid.outputs.output }} | jq .data[0].id)
+          
+          echo "NSG_ID=$(echo $retid)" >> $GITHUB_ENV
+          echo "NSG_ID=$(echo $retid)" >> $GITHUB_OUTPUT
+          
+          cat $GITHUB_ENV
     outputs:
       compartmentocid: ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}
       dbinstanceocid: ${{ steps.getsourcedbidoutput.outputs.DB_INST_ID }}
       dbname: ${{ steps.getsourcedbidoutput.outputs.DB_NAME }}
+      nsgid: ${{ steps.getsourcedbidoutput.outputs.NSG_ID }}
       
       
      
