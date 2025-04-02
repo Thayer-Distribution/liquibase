@@ -70,11 +70,14 @@ jobs:
    name: tstinputs
    steps:
       - name: InputsReceived
+        id: inputsreceived
         run: |
          echo "innst name***" ${{ inputs.dbinstance-toclonefrom }}
          echo " comp name***" ${{ inputs.compartment-name }}
          echo "env name***" ${{ inputs.envname }}
-         echo "[\"ocid1.networksecuritygroup.oc1.iad.aaaaaaaaphbtttjlxe6dkuuv5lcyb77jlynahuavislaia5eynn2dp6dawra\"]" > nsgid.json
+        
+         echo '${{ github.event.inputs.dbdetails }}' | jq -r 'to_entries[] | "\(.key)=\(.value)"' | xargs -I '{}' echo "{}" >> "$GITHUB_OUTPUT"
+         
          #echo "{ 
          #      \"nsgid\": \"ocid1.networksecuritygroup.oc1.iad.aaaaaaaaphbtttjlxe6dkuuv5lcyb77jlynahuavislaia5eynn2dp6dawra\"
         #     }" > nsgid.json
@@ -138,7 +141,7 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: cloneatpdb
         with:
-          command: "oci db autonomous-database create-from-clone --clone-type ${{ inputs.dbclonetype }} --source-id  ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }} --compute-model ${{ inputs.dbcomputemodel }} --compute-count ${{ inputs.dbcpucount }} --data-storage-size-in-gbs ${{ inputs.dbstoragesize }} --admin-password ${{ secrets.DB_THAYER_DEVELOPMENT_PASSWD }} --compartment-id  ${{ needs.getcompartmentanddbinstid.outputs.compartmentocid }} --db-version ${{ inputs.dbversion }} --db-name ${{ inputs.dbname }} --display-name  ${{ inputs.dbdisplayname }} --nsg-ids ${{ env.NSGID }} --subnet-id ${{ env.SUBNETID }} "
+          command: "oci db autonomous-database create-from-clone --clone-type ${{ steps.inputsreceived.output.dbclonetype }} --source-id  ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }} --compute-model ${{ inputs.dbcomputemodel }} --compute-count ${{ inputs.dbcpucount }} --data-storage-size-in-gbs ${{ inputs.dbstoragesize }} --admin-password ${{ secrets.DB_THAYER_DEVELOPMENT_PASSWD }} --compartment-id  ${{ needs.getcompartmentanddbinstid.outputs.compartmentocid }} --db-version ${{ steps.inputsreceived.output.DBVERSION }} --db-name ${{ steps.inputsreceived.output.DBNAME }} --display-name  ${{ steps.inputsreceived.output.DBDISPNAME }} --nsg-ids ${{ env.NSGID }} --subnet-id ${{ env.SUBNETID }} "
           silent: false
      
 
