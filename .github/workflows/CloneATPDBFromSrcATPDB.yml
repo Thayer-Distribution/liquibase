@@ -73,10 +73,10 @@ jobs:
         id: inputsreceived
         run: |
          echo "innst name***" ${{ inputs.dbinstance-toclonefrom }}
-         echo " comp name***" ${{ inputs.compartment-name }}
+         #echo " comp name***" ${{ inputs.compartment-name }}
          echo "env name***" ${{ inputs.envname }}
         
-         echo '${{ github.event.inputs.dbdetails }}' | jq -r 'to_entries[] | "\(.key)=\(.value)"' | xargs -I '{}' echo "{}" >> "$GITHUB_OUTPUT"
+         echo '${{ inputs.dbdetails }}' | jq -r 'to_entries[] | "\(.key)=\(.value)"' | xargs -I '{}' echo "{}" >> "$GITHUB_OUTPUT"
          
          #echo "{ 
          #      \"nsgid\": \"ocid1.networksecuritygroup.oc1.iad.aaaaaaaaphbtttjlxe6dkuuv5lcyb77jlynahuavislaia5eynn2dp6dawra\"
