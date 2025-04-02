@@ -12,33 +12,11 @@ on:
         - 'dev'
         - 'qa'
         - 'uat'
-      dbname:
-        description: 'database name '
+      dbdetails:
+        description: 'Give Details of DB as mentioned in the default format  '
         required: true
-        default: 'dev1'
+        default: '{ "DBNAME": "thayerdev", "DISPLAYNAME": "THAYERDEVELOPMENT","CLONETYPE": "METADATA", "DBVERSION": "23ai"}'
         type: string
-      dbdisplayname:
-        description: 'database display name '
-        required: true
-        default: 'dev2'
-        type: string
-      dbclonetype:
-        type: choice
-        options:
-          - FULL
-          - METADATA
-          - PARTIAL
-        description: 'database clone type name '
-        required: true
-        default: 'FULL'
-      dbversion:
-        type: choice
-        options:
-          - 19c
-          - 23ai
-        description: 'database version   '
-        required: true
-        default: '19c'
       dbcomputemodel:
         type: choice
         options:
