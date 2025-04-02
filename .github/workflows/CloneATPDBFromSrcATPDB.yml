@@ -15,7 +15,7 @@ on:
       dbdetails:
         description: 'Give Details of DB as mentioned in the default format  '
         required: true
-        default: '{ "DBNAME": "thayerdev", "DISPLAYNAME": "THAYERDEVELOPMENT","CLONETYPE": "METADATA", "DBVERSION": "23ai"}'
+        default: '[{ "DBNAME": "thayerdev", "DISPLAYNAME": "THAYERDEVELOPMENT","CLONETYPE": "METADATA", "DBVERSION": "23ai"}]'
         type: string
       dbcomputemodel:
         type: choice
