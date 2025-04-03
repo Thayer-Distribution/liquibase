@@ -155,7 +155,7 @@ jobs:
           cat ${GITHUB_OUTPUT}
           echo "githuboutput***"
           cat $GITHUB_OUTPUT
-          echo "clonetype" ${{ steps.parseinput.outputs }} | jq .
+          
           echo "clonetype" ${{ steps.parseinput.outputs.CLONETYPE }}
           
    
