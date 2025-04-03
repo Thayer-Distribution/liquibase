@@ -164,7 +164,7 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: cloneatpdb
         with:
-          command: "oci db autonomous-database create-from-clone --clone-type ${{ steps.parseinput.outputs.CLONETYPE }} --source-id  ${{ needs.getcmpanddbinstid.outputs.dbinstanceocid }} --compute-model ${{ inputs.dbcomputemodel }} --compute-count ${{ inputs.dbcpucount }} --data-storage-size-in-gbs ${{ inputs.dbstoragesize }} --admin-password ${{ secrets.DB_THAYER_DEVELOPMENT_PASSWD }} --compartment-id  ${{ needs.getcmpanddbinstid.outputs.compartmentocid }} --db-version ${{ steps.parseinput.outputs.DBVERSION }} --db-name ${{ steps.parseinput.outputs.DBNAME }} --display-name  ${{ steps.parseinput.outputs.DISPLAYNAME }} --nsg-ids "['${{ needs.getresourceids.outputs.nsgid }}']" --subnet-id ${{ needs.getsubnetid.outputs.subnetid }} "
+          command: 'oci db autonomous-database create-from-clone --clone-type ${{ steps.parseinput.outputs.CLONETYPE }} --source-id  ${{ needs.getcmpanddbinstid.outputs.dbinstanceocid }} --compute-model ${{ inputs.dbcomputemodel }} --compute-count ${{ inputs.dbcpucount }} --data-storage-size-in-gbs ${{ inputs.dbstoragesize }} --admin-password ${{ secrets.DB_THAYER_DEVELOPMENT_PASSWD }} --compartment-id  ${{ needs.getcmpanddbinstid.outputs.compartmentocid }} --db-version ${{ steps.parseinput.outputs.DBVERSION }} --db-name ${{ steps.parseinput.outputs.DBNAME }} --display-name  ${{ steps.parseinput.outputs.DISPLAYNAME }} --nsg-ids "['${{ needs.getresourceids.outputs.nsgid }}']" --subnet-id ${{ needs.getsubnetid.outputs.subnetid }} '
           silent: false
      
 
