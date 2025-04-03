@@ -140,7 +140,6 @@ jobs:
     steps:
       - name: testoutputs
         run: |
-         
           echo "srcid***"${{  needs.getsubnetid.outputs.subnetid  }} 
           echo "srcid***"${{  needs.getresourceids.outputs.subnetid  }} 
           cat ${{ GITHUB_OUTPUT }}
