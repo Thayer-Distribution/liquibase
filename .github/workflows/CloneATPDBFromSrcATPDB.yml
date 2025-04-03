@@ -111,7 +111,7 @@ jobs:
           envname: ${{ inputs.envname || 'dev' }} 
           compartment-name: ${{  inputs.compartment-name || 'OCI_USEast_Thayer_Core_Infra' }}
           nsg-name: ${{  inputs.nsg-name || 'thayerdev_nsg' }}
-          nsg-compartmentid: ${{  needs.getnsgcmpid.outputs.compartmentocid }}  || 'OCI_USEast_Thayer_Core_Infra' }}
+          nsg-compartmentid: ${{  needs.getnsgcmpid.outputs.compartmentocid   || 'OCI_USEast_Thayer_Core_Infra' }}
                     
    secrets: inherit
   clonedb-instance:
