@@ -215,7 +215,7 @@ jobs:
           retid=$(echo ${{ steps.getsecretid.outputs.output }} | jq .data[0].id)
           
           echo "SECRET_ID=$(echo $retid)" >> $GITHUB_ENV
-          echo "SERCRET_ID=$(echo $retid)" >> $GITHUB_OUTPUT
+          echo "SECRET_ID=$(echo $retid)" >> $GITHUB_OUTPUT
           
           cat $GITHUB_OUTPUT
     outputs:
