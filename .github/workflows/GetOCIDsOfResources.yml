@@ -104,7 +104,7 @@ jobs:
           cat $GITHUB_OUTPUT
         
           echo "${{ steps.getcompartmentid.outputs.output }} | jq ."
-          retid=$(echo ${{ steps.getcompartmentid.outputs.output }} | jq .[0])
+          retid=$(echo ${{ steps.getcompartmentid.outputs.output }} | jq .data[0].id)
          
           echo "retid"$retid
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
