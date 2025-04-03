@@ -142,7 +142,7 @@ jobs:
         run: |
           echo "srcid***"${{  needs.getsubnetid.outputs.subnetid  }} 
           echo "srcid***"${{  needs.getresourceids.outputs.subnetid  }} 
-          cat ${{ GITHUB_OUTPUT }}
+          cat ${GITHUB_OUTPUT}
             
       - name: Clone the DB
         uses: oracle-actions/run-oci-cli-command@v1.3.2
