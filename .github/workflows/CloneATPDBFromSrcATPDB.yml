@@ -145,7 +145,8 @@ jobs:
          echo "innst name***" ${{ inputs.dbinstance-toclonefrom }}
          #echo " comp name***" ${{ inputs.compartment-name }}
          echo "env name***" ${{ inputs.envname }}
-        
+         echo '${{ inputs.dbdetails }}' | jq -r 'to_entries[] | "\(.key)=\(.value)"'
+         echo '${{ inputs.dbdetails }}' | jq -r 'to_entries[] | "\(.key)=\(.value)"' | xargs -I '{}' echo "{}"
          echo '${{ inputs.dbdetails }}' | jq -r 'to_entries[] | "\(.key)=\(.value)"' | xargs -I '{}' echo "{}" >> "$GITHUB_OUTPUT"
          cat $GITHUB_OUTPUT
       - name: testoutputs
