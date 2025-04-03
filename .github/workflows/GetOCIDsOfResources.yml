@@ -178,8 +178,8 @@ jobs:
          
           echo "nsg***"$nsgid 
           #cat $GITHUB_OUTPUT
-          echo ${{ steps.nsgid.outputs.output }} | jq .data[0].id
-          retid=$(echo ${{ steps.nsgid.outputs.output }} | jq .data[0].id)
+          echo ${{ steps.getnsgid.outputs.output }} | jq .data[0].id
+          retid=$(echo ${{ steps.getnsgid.outputs.output }} | jq .data[0].id)
           
           echo "NSG_ID=$(echo $retid)" >> $GITHUB_ENV
           echo "NSG_ID=$(echo $retid)" >> $GITHUB_OUTPUT
