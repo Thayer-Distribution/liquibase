@@ -140,15 +140,19 @@ jobs:
     steps:
       - name: testoutputs
         run: |
-          echo "srcid***"${{  needs.getsubnetid.outputs.subnetid  }} 
-          echo "srcid***"${{  needs.getresourceids.outputs.subnetid  }} 
+          echo "subnetid***"${{  needs.getsubnetid.outputs.subnetid  }} 
+          echo "srcid***"${{  needs.getresourceids.outputs.nsgid  }} 
           cat ${GITHUB_OUTPUT}
+          echo "githuboutput***"
+          cat $GITHUB_OUTPUT
+          echo "clonetype" ${{ steps.inputsreceived.outputs.CLONETYPE }}
+   
             
       - name: Clone the DB
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: cloneatpdb
         with:
-          command: "oci db autonomous-database create-from-clone --clone-type ${{ steps.inputsreceived.outputs.CLONETYPE }} --source-id  ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }} --compute-model ${{ inputs.dbcomputemodel }} --compute-count ${{ inputs.dbcpucount }} --data-storage-size-in-gbs ${{ inputs.dbstoragesize }} --admin-password ${{ secrets.DB_THAYER_DEVELOPMENT_PASSWD }} --compartment-id  ${{ needs.getcompartmentanddbinstid.outputs.compartmentocid }} --db-version ${{ steps.inputsreceived.outputs.DBVERSION }} --db-name ${{ steps.inputsreceived.outputs.DBNAME }} --display-name  ${{ steps.inputsreceived.outputs.DISPLAYNAME }} --nsg-ids ${{ env.NSGID }} --subnet-id ${{ env.SUBNETID }} "
+          command: "oci db autonomous-database create-from-clone --clone-type ${{ steps.inputsreceived.outputs.CLONETYPE }} --source-id  ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }} --compute-model ${{ inputs.dbcomputemodel }} --compute-count ${{ inputs.dbcpucount }} --data-storage-size-in-gbs ${{ inputs.dbstoragesize }} --admin-password ${{ secrets.DB_THAYER_DEVELOPMENT_PASSWD }} --compartment-id  ${{ needs.getcompartmentanddbinstid.outputs.compartmentocid }} --db-version ${{ steps.inputsreceived.outputs.DBVERSION }} --db-name ${{ steps.inputsreceived.outputs.DBNAME }} --display-name  ${{ steps.inputsreceived.outputs.DISPLAYNAME }} --nsg-ids ${{ needs.getresourceids.outputs.nsgid }} --subnet-id ${{ needs.getsubnetid.outputs.subnetid }} "
           silent: false
      
 
