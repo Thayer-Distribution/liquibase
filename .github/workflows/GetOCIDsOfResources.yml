@@ -85,13 +85,13 @@ jobs:
       - name: Workspace Location
         run: echo $GITHUB_WORKSPACE
       
-      - name: Get Compartment ID the
+      - name: Get Compartment ID
         if: "${{ inputs.compartment-name != '' }}"
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getcompartmentid
         with:
-          command: ' oci  iam compartment  list '
-          query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
+          command: ' oci  iam compartment  list --name "${{ env.OCI_COMPARTMENT_NAME }}"'
+          #query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
           silent: false
       - name: Add Compartment OCID To the Env 
         if: "${{ inputs.compartment-name != '' }}"
