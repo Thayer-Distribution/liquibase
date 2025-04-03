@@ -88,6 +88,7 @@ jobs:
           envname: ${{ inputs.envname || 'dev' }} 
           db-instance-name: ${{ inputs.db-instance-name || 'Thayer_Development' }}
           compartment-name: ${{  inputs.compartment-name || 'thayer_dev' }}
+          #db-subnet-name: ${{  inputs.db-subnet-name || 'thayer_dev_net' }}
    secrets: inherit
   getnsgcmpid:
    uses: './.github/workflows/GetOCIDsOfResources.yml'
