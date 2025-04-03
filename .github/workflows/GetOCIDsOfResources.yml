@@ -184,7 +184,7 @@ jobs:
           echo "NSG_ID=$(echo $retid)" >> $GITHUB_ENV
           echo "NSG_ID=$(echo $retid)" >> $GITHUB_OUTPUT
           
-          cat $GITHUB_ENV
+          cat $GITHUB_OUTPUT
     outputs:
       compartmentocid: ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}
       dbinstanceocid: ${{ steps.getsourcedbidoutput.outputs.DB_INST_ID }}
