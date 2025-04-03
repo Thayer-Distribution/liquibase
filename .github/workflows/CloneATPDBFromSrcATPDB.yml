@@ -55,7 +55,7 @@ on:
        description: 'nsg name to assoicate the DB Instance with'
        required: true
        type: string
-       default: thayerdev_nsg
+       default: thayerdev_NSG
       nsg-cmpname:
        description: 'Compartment name of the NSG'
        required: true
