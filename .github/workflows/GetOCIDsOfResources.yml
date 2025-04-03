@@ -63,8 +63,8 @@ on:
        description: "return subnet id"
        value: ${{ jobs.getcompartmentanddbinstanceid.outputs.subnetid }}
       secretid:
-       description: "return subnet id"
-       value: ${{ jobs.getcompartmentanddbinstanceid.outputs.subnetid }}
+       description: "return secret id"
+       value: ${{ jobs.getcompartmentanddbinstanceid.outputs.secretid }}
        
      
 jobs:
