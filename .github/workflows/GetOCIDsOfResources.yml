@@ -224,7 +224,7 @@ jobs:
       dbname: ${{ steps.getsourcedbidoutput.outputs.DB_NAME }}
       nsgid: ${{ steps.getnsgoutput.outputs.NSG_ID }}
       subnetid: ${{ steps.getsubnetoutput.outputs.SUBNET_ID }}
-      secretid: ${{ steps.getsecretocid.outputs.SECRET_ID }}
+      secretid: ${{ steps.getsecretoutput.outputs.SECRET_ID }}
       
       
      
