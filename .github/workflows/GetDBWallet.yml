@@ -71,9 +71,4 @@ jobs:
         with:
           command: ' oci db autonomous-database generate-wallet --autonomous-database-id ${{ env.DB_INST_ID }} --file ${{ env.DB_INST }}.zip --password ${{ secrets[env.DB_WALLET_PASSWD] }} --generate-type SINGLE'
           silent: false
-      - name : setup java
-        uses: actions/setup-java@v4
-        with:
-         distribution: 'oracle'
-         java-version: '21'
-     
+    
