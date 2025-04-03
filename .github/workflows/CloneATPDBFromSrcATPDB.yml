@@ -64,10 +64,10 @@ on:
       
   
 jobs:
-  printinputs:
+  inputsreceived:
    runs-on: self-hosted
    
-   name: tstinputs
+   name: inputsreceived
    steps:
       - name: InputsReceived
         id: inputsreceived
@@ -116,7 +116,7 @@ jobs:
    secrets: inherit
   clonedb-instance:
     runs-on: self-hosted
-    needs: [ getresourceids, getsubnetid]
+    needs: [ inputsreceived, getcmpanddbinstid, getresourceids, getsubnetid]
     environment:  ${{
          github.ref_name == 'master' && 'dev'
          || github.ref_name == 'dev'    && 'dev'
@@ -145,14 +145,14 @@ jobs:
           cat ${GITHUB_OUTPUT}
           echo "githuboutput***"
           cat $GITHUB_OUTPUT
-          echo "clonetype" ${{ steps.inputsreceived.outputs }}
+          echo "clonetype" ${{ needs.inputsreceived.outputs }}
    
             
       - name: Clone the DB
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: cloneatpdb
         with:
-          command: "oci db autonomous-database create-from-clone --clone-type ${{ steps.inputsreceived.outputs.CLONETYPE }} --source-id  ${{ needs.getcmpanddbinstid.outputs.dbinstanceocid }} --compute-model ${{ inputs.dbcomputemodel }} --compute-count ${{ inputs.dbcpucount }} --data-storage-size-in-gbs ${{ inputs.dbstoragesize }} --admin-password ${{ secrets.DB_THAYER_DEVELOPMENT_PASSWD }} --compartment-id  ${{ needs.getcmpanddbinstid.outputs.compartmentocid }} --db-version ${{ steps.inputsreceived.outputs.DBVERSION }} --db-name ${{ steps.inputsreceived.outputs.DBNAME }} --display-name  ${{ steps.inputsreceived.outputs.DISPLAYNAME }} --nsg-ids ${{ needs.getresourceids.outputs.nsgid }} --subnet-id ${{ needs.getsubnetid.outputs.subnetid }} "
+          command: "oci db autonomous-database create-from-clone --clone-type ${{ needs.inputsreceived.outputs.CLONETYPE }} --source-id  ${{ needs.getcmpanddbinstid.outputs.dbinstanceocid }} --compute-model ${{ inputs.dbcomputemodel }} --compute-count ${{ inputs.dbcpucount }} --data-storage-size-in-gbs ${{ inputs.dbstoragesize }} --admin-password ${{ secrets.DB_THAYER_DEVELOPMENT_PASSWD }} --compartment-id  ${{ needs.getcmpanddbinstid.outputs.compartmentocid }} --db-version ${{ needs.inputsreceived.outputs.DBVERSION }} --db-name ${{ needs.inputsreceived.outputs.DBNAME }} --display-name  ${{ needs.inputsreceived.outputs.DISPLAYNAME }} --nsg-ids ${{ needs.getresourceids.outputs.nsgid }} --subnet-id ${{ needs.getsubnetid.outputs.subnetid }} "
           silent: false
      
 
