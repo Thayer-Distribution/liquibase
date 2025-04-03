@@ -189,8 +189,8 @@ jobs:
       compartmentocid: ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}
       dbinstanceocid: ${{ steps.getsourcedbidoutput.outputs.DB_INST_ID }}
       dbname: ${{ steps.getsourcedbidoutput.outputs.DB_NAME }}
-      nsgid: ${{ steps.getsourcedbidoutput.outputs.NSG_ID }}
-      subnetid: ${{ steps.getsourcedbidoutput.outputs.SUBNET_ID }}
+      nsgid: ${{ steps.getnsgdetails.outputs.NSG_ID }}
+      subnetid: ${{ steps.getsubnetid.outputs.SUBNET_ID }}
       
       
      
