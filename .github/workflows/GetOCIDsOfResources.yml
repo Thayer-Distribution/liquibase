@@ -41,6 +41,11 @@ on:
        required: false
        type: string
        default: ""
+      secret-name:
+       description: 'Vault secret name  '
+       required: false
+       type: string
+       default: ""
    outputs:
       compartmentocid:
         description: "return compartment ocid"
@@ -55,6 +60,9 @@ on:
        description: "return nsg id"
        value: ${{ jobs.getcompartmentanddbinstanceid.outputs.nsgid }}
       subnetid:
+       description: "return subnet id"
+       value: ${{ jobs.getcompartmentanddbinstanceid.outputs.subnetid }}
+      secretid:
        description: "return subnet id"
        value: ${{ jobs.getcompartmentanddbinstanceid.outputs.subnetid }}
        
@@ -80,6 +88,7 @@ jobs:
       NSG_NAME: ${{ inputs.nsg-name || 'thayerdev_nsg' }}
       NSG_CMPID: ${{ inputs.nsg-compartmentid || 'OCI_USEast_Thayer_Core_Infra' }}
       SUBNET_NAME: ${{ inputs.db-subnet-name || 'thayer_dev_net' }}
+      SECRET_NAME: ${{ inputs.secret-name || 'thayer_dev_net' }}
      
     steps:
       - name: Workspace Location
@@ -185,12 +194,37 @@ jobs:
           echo "NSG_ID=$(echo $retid)" >> $GITHUB_OUTPUT
           
           cat $GITHUB_OUTPUT
+      - name: Get Secret ID 
+        if: "${{ inputs.secret-name != '' }}"
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        id: getsecretid
+        with:
+          command: ' oci vault secret list --compartment-id ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}  --name "${{ env.SECRET_NAME }}" '
+          #query: "data[?name=='${{ env.NSG_NAME }}'].id"
+          silent: false
+      - name: Add Secret OCID To the Env 
+        id: getsecretoutput
+        if: "${{ inputs.secret-name != '' }}"
+        env:
+         secretid: ${{ steps.getsecretid.outputs.output }}
+        run: |
+         
+          echo "secretid***"$secretid 
+          #cat $GITHUB_OUTPUT
+          echo ${{ steps.getsecretid.outputs.output }} | jq .data[0].id
+          retid=$(echo ${{ steps.getnsgid.outputs.output }} | jq .data[0].id)
+          
+          echo "SECRET_ID=$(echo $retid)" >> $GITHUB_ENV
+          echo "SERCRET_ID=$(echo $retid)" >> $GITHUB_OUTPUT
+          
+          cat $GITHUB_OUTPUT
     outputs:
       compartmentocid: ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}
       dbinstanceocid: ${{ steps.getsourcedbidoutput.outputs.DB_INST_ID }}
       dbname: ${{ steps.getsourcedbidoutput.outputs.DB_NAME }}
       nsgid: ${{ steps.getnsgoutput.outputs.NSG_ID }}
       subnetid: ${{ steps.getsubnetoutput.outputs.SUBNET_ID }}
+      secretid: ${{ steps.getsecretocid.outputs.SECRET_ID }}
       
       
      
