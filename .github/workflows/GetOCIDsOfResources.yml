@@ -146,7 +146,7 @@ jobs:
           #query: "data[?name=='${{ env.NAME }}'].id"
           silent: false
       - name: Add SUBNET OCID To the Env 
-        id: getsubnetdetails
+        id: getsubnetoutput
         if: "${{ inputs.db-subnet-name != '' }}"
         env:
          subnetid: ${{ steps.getsubnetid.outputs.output }}
@@ -170,7 +170,7 @@ jobs:
           #query: "data[?name=='${{ env.NSG_NAME }}'].id"
           silent: false
       - name: Add NSG OCID To the Env 
-        id: getnsgdetails
+        id: getnsgoutput
         if: "${{ inputs.nsg-name != '' }}"
         env:
          nsgid: ${{ steps.getnsgid.outputs.output }}
@@ -189,8 +189,8 @@ jobs:
       compartmentocid: ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}
       dbinstanceocid: ${{ steps.getsourcedbidoutput.outputs.DB_INST_ID }}
       dbname: ${{ steps.getsourcedbidoutput.outputs.DB_NAME }}
-      nsgid: ${{ steps.getnsgdetails.outputs.NSG_ID }}
-      subnetid: ${{ steps.getsubnetid.outputs.SUBNET_ID }}
+      nsgid: ${{ steps.getnsgoutput.outputs.NSG_ID }}
+      subnetid: ${{ steps.getsubnetoutput.outputs.SUBNET_ID }}
       
       
      
