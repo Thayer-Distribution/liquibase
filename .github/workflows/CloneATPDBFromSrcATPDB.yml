@@ -145,7 +145,7 @@ jobs:
           cat ${GITHUB_OUTPUT}
           echo "githuboutput***"
           cat $GITHUB_OUTPUT
-          echo "clonetype" ${{ steps.inputsreceived.outputs.CLONETYPE }}
+          echo "clonetype" ${{ steps.inputsreceived.outputs }}
    
             
       - name: Clone the DB
