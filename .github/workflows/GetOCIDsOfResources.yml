@@ -212,7 +212,7 @@ jobs:
           echo "secretid***"$secretid 
           #cat $GITHUB_OUTPUT
           echo ${{ steps.getsecretid.outputs.output }} | jq .data[0].id
-          retid=$(echo ${{ steps.getnsgid.outputs.output }} | jq .data[0].id)
+          retid=$(echo ${{ steps.getsecretid.outputs.output }} | jq .data[0].id)
           
           echo "SECRET_ID=$(echo $retid)" >> $GITHUB_ENV
           echo "SERCRET_ID=$(echo $retid)" >> $GITHUB_OUTPUT
