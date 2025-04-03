@@ -82,7 +82,13 @@ jobs:
          #      \"nsgid\": \"ocid1.networksecuritygroup.oc1.iad.aaaaaaaaphbtttjlxe6dkuuv5lcyb77jlynahuavislaia5eynn2dp6dawra\"
         #     }" > nsgid.json
     
-
+  getcmpanddbinstid:
+   uses: './.github/workflows/GetOCIDsOfResources.yml'
+   with:
+          envname: ${{ inputs.envname || 'dev' }} 
+          db-instance-name: ${{ inputs.db-instance-name || 'Thayer_Development' }}
+          compartment-name: ${{  inputs.compartment-name || 'thayer_dev' }}
+   secrets: inherit
   getnsgcmpid:
    uses: './.github/workflows/GetOCIDsOfResources.yml'
    with:
