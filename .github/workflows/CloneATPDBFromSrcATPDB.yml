@@ -77,7 +77,7 @@ jobs:
          echo "env name***" ${{ inputs.envname }}
         
          echo '${{ inputs.dbdetails }}' | jq -r 'to_entries[] | "\(.key)=\(.value)"' | xargs -I '{}' echo "{}" >> "$GITHUB_OUTPUT"
-         
+         cat $GITHUB_OUTPUT
          #echo "{ 
          #      \"nsgid\": \"ocid1.networksecuritygroup.oc1.iad.aaaaaaaaphbtttjlxe6dkuuv5lcyb77jlynahuavislaia5eynn2dp6dawra\"
         #     }" > nsgid.json
