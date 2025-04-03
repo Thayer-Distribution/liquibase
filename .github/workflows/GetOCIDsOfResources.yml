@@ -138,7 +138,7 @@ jobs:
           echo "DB_NAME=$(echo $dbname)" >> $GITHUB_OUTPUT
           cat $GITHUB_ENV
       - name: Get SUBNET ID 
-        if: "${{ inputs.subnet-name != '' }}"
+        if: "${{ inputs.db-subnet-name != '' }}"
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getsubnetid
         with:
@@ -147,7 +147,7 @@ jobs:
           silent: false
       - name: Add SUBNET OCID To the Env 
         id: getsubnetdetails
-        if: "${{ inputs.subnet-name != '' }}"
+        if: "${{ inputs.db-subnet-name != '' }}"
         env:
          subnetid: ${{ steps.getsubnetid.outputs.output }}
         run: |
