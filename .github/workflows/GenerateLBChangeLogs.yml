@@ -92,6 +92,7 @@ jobs:
           echo "compartmentid******"$retid
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
           echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_OUTPUT
+          echo  "LBSQLCLCMD=$(echo lb generate-changelog -output-file controller.${{ inputs.changelogformat || 'xml' }} )" >> $GITHUB_OUTPUT 
     
         
       - name: Add Source DB OCID To the Env 
@@ -151,7 +152,7 @@ jobs:
           envname:  ${{ inputs.envname || 'dev' }} 
           db-instance-name: ${{ inputs.db-instance-name || 'Thayer_Development' }}
           db-instance-id: ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }}
-          sqlclcmd: ${{ env.LBSQLCLCMD }}
+          sqlclcmd: ${{ needs.getcompartmentanddbinstid.outputs.LBSQLCLCMD }}
         
         
         
