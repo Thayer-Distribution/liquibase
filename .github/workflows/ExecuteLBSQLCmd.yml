@@ -42,7 +42,7 @@ jobs:
     name: Get Schema Credentials
     
     uses: './.github/workflows/GetVaultSecret.yml'
-    runs-on: self-hosted
+    
     with:
           envname: ${{ inputs.envname || 'dev' }} 
           compartment-name: ${{  inputs.compartment-name || 'thayer_dev' }}
