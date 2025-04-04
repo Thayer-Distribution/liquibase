@@ -29,7 +29,11 @@ on:
         required: false
         type: string
         default: 'basev1'
-        
+      schemaname:
+        description: 'schema name to connect and execute the liquibase'
+        required: true
+        type: string
+        default: 'liquibase'
 
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -59,12 +63,13 @@ jobs:
       DB_ENV: ${{ inputs.envname || 'dev' }}
       DB_INST: ${{ inputs.db-instance-name || 'thayer_dev' }}
       DB_USER: ${{ format('DB_{0}_USER', inputs.db-instance-name || 'thayer_dev' ) }}
-      DB_PASSWD: ${{ format('DB_{0}_PASSWD',inputs.db-instance-name || 'thayer_dev') }}
+      #DB_PASSWD: ${{ format('DB_{0}_PASSWD',inputs.db-instance-name || 'thayer_dev') }}
       DB_WALLET_PASSWD: ${{ format('DB_{0}_WALLETPASSWD',inputs.db-instance-name || 'Thayer_Development') }}
       DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',inputs.db-instance-name || 'thayer_dev' ) }}
       DB_INST_ID: ${{ inputs.db-instance-id || 'ocid1.autonomousdatabase.oc1.iad.anuwcljtntxkdlyambke7vkjliaugvioqteeobnp5q7vs5x6hdp56elwczla' }}
       SQL_LB_CMD: ${{ inputs.sqlcl-cmd || 'lb update -changelog-file controller.xml' }}
       PR_NUMBER: ${{ github.event.number ||  inputs.tagnametouse  || 'basev1' }}
+      SCHEMA_NAME: ${{ inputs.schema-name || 'liquibase' }}
       
   
     steps:
@@ -72,7 +77,7 @@ jobs:
       - name: Workspace Location
         run: | 
          echo $GITHUB_WORKSPACE
-         echo "DBPASSWD***"${{ env.DB_PASSWD }}
+         #echo "DBPASSWD***"${{ env.DB_PASSWD }}
          echo "inputs***"${{ inputs.envname }}
          echo "github user****"${{ github.actor }}
          echo "HOME***"$HOME
@@ -98,6 +103,14 @@ jobs:
         with:
          distribution: 'oracle'
          java-version: '21'
+      - name : Get DB Schema Passwd
+        id: getdbschemapass
+        uses: './.github/workflows/GetVaultSecret.yml'
+        with:
+          envname: ${{ inputs.envname || 'dev' }} 
+          compartment-name: ${{  inputs.compartment-name || 'thayer_dev' }}
+          secret-name:  ${{ inputs.schema-name || 'liquibase' }}
+         
       - name: 'setup directories'
         
         run: |
@@ -111,8 +124,8 @@ jobs:
         working-directory: ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
         run: |
           echo "Testing***"
-          #echo "${{ env.SQL_LB_CMD }}" | sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
-          #echo "lb tag -tag ${{ env.PR_NUMBER }} " | sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}  
+          #echo "${{ env.SQL_LB_CMD }}" | sql ${{ secrets[env.DB_USER] }}/${{ steps.getdbschemapass.outputs.schemaval }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
+          #echo "lb tag -tag ${{ env.PR_NUMBER }} " | sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.steps.getdbschemapass.outputs.schemaval] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}  
 
           
          
