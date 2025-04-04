@@ -29,7 +29,7 @@ on:
         description: 'List of comma seperated schemas to generate the changelogs'
         required: false
         type: string
-        default: 'PICASSO,IMAGE_STORE,C##ADP$SERVICE'
+        default: '["PICASSO","IMAGE_STORE","C##ADP$SERVICE"]'
       changelogformat:
         description: 'ChangeLog format like sql,json etc'
         required: false
