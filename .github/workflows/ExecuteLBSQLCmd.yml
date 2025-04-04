@@ -39,14 +39,14 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
    getschemavault:
-   id: getdbschemapass
-   uses: './.github/workflows/GetVaultSecret.yml'
-   runs-on: self-hosted
-   with:
+    id: getdbschemapass
+    uses: './.github/workflows/GetVaultSecret.yml'
+    runs-on: self-hosted
+    with:
           envname: ${{ inputs.envname || 'dev' }} 
           compartment-name: ${{  inputs.compartment-name || 'thayer_dev' }}
           secret-name:  ${{ inputs.schema-name || 'liquibase' }}
-   secrets: inherit 
+    secrets: inherit 
    
    synclbfilestotargetenv:
     
