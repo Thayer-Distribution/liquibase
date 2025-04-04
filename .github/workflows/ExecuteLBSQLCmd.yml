@@ -38,8 +38,18 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+   getschemavault:
+   id: getdbschemapass
+   uses: './.github/workflows/GetVaultSecret.yml'
+   runs-on: self-hosted
+   with:
+          envname: ${{ inputs.envname || 'dev' }} 
+          compartment-name: ${{  inputs.compartment-name || 'thayer_dev' }}
+          secret-name:  ${{ inputs.schema-name || 'liquibase' }}
+   secrets: inherit 
+   
    synclbfilestotargetenv:
-    runs-on: self-hosted
+    
       
      
     #environment: |-
@@ -49,6 +59,7 @@ jobs:
       #   || 'dev'
      # }}
     environment: ${{ inputs.envname }}
+    needs: getschemavault
     name: Integrate and execute LB through SQLcl 
     env:
       OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
@@ -103,13 +114,7 @@ jobs:
         with:
          distribution: 'oracle'
          java-version: '21'
-      - name : Get DB Schema Passwd
-        id: getdbschemapass
-        uses: './.github/workflows/GetVaultSecret.yml'
-        with:
-          envname: ${{ inputs.envname || 'dev' }} 
-          compartment-name: ${{  inputs.compartment-name || 'thayer_dev' }}
-          secret-name:  ${{ inputs.schema-name || 'liquibase' }}
+      
          
       - name: 'setup directories'
         
@@ -124,8 +129,8 @@ jobs:
         working-directory: ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
         run: |
           echo "Testing***"
-          #echo "${{ env.SQL_LB_CMD }}" | sql ${{ secrets[env.DB_USER] }}/${{ steps.getdbschemapass.outputs.schemaval }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
-          #echo "lb tag -tag ${{ env.PR_NUMBER }} " | sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.steps.getdbschemapass.outputs.schemaval] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}  
+          #echo "${{ env.SQL_LB_CMD }}" | sql ${{ secrets[env.DB_USER] }}/${{ needs.getschemavault.outputs.schemaval }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
+          #echo "lb tag -tag ${{ env.PR_NUMBER }} " | sql ${{ secrets[env.DB_USER] }}/${{ secrets[needs.schemaval.outputs.schemaval] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}  
 
           
          
