@@ -147,7 +147,7 @@ jobs:
     needs: getcompartmentanddbinstid
     strategy:
      matrix:
-          schemanname:  ${{ inputs.schema-name }}
+          schemanname:  ${{ inputs.dbschemastogeneratecl }}
          
         
         
