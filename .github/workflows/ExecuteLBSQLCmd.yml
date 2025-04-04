@@ -40,7 +40,7 @@ on:
 jobs:
    getschemavault:
     name: Get Schema Credentials
-    id: getdbschemapass
+    
     uses: './.github/workflows/GetVaultSecret.yml'
     runs-on: self-hosted
     with:
