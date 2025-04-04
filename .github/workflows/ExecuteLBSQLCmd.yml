@@ -60,6 +60,7 @@ jobs:
       DB_INST: ${{ inputs.db-instance-name || 'thayer_dev' }}
       DB_USER: ${{ format('DB_{0}_USER', inputs.db-instance-name || 'thayer_dev' ) }}
       DB_PASSWD: ${{ format('DB_{0}_PASSWD',inputs.db-instance-name || 'thayer_dev') }}
+      DB_WALLET_PASSWD: ${{ format('DB_{0}_WALLETPASSWD',inputs.db-instance-name || 'Thayer_Development') }}
       DB_TNSNAME: ${{ format('DB_{0}_TNSNAME',inputs.db-instance-name || 'thayer_dev' ) }}
       DB_INST_ID: ${{ inputs.db-instance-id || 'ocid1.autonomousdatabase.oc1.iad.anuwcljtntxkdlyambke7vkjliaugvioqteeobnp5q7vs5x6hdp56elwczla' }}
       SQL_LB_CMD: ${{ inputs.sqlcl-cmd || 'lb update -changelog-file controller.xml' }}
@@ -89,7 +90,7 @@ jobs:
         id: get-wallet-id
        
         with:
-          command: ' oci db autonomous-database generate-wallet --autonomous-database-id ${{ env.DB_INST_ID }} --file ${{ env.DB_INST }}.zip --password ${{ secrets[env.DB_PASSWD] }} --generate-type SINGLE
+          command: ' oci db autonomous-database generate-wallet --autonomous-database-id ${{ env.DB_INST_ID }} --file ${{ env.DB_INST }}.zip --password ${{ secrets[env.DB_WALLET_PASSWD] }} --generate-type SINGLE
 '
           silent: false
       - name : setup java
