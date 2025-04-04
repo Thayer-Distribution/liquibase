@@ -147,22 +147,19 @@ jobs:
     needs: getcompartmentanddbinstid
     strategy:
      matrix:
-      include: 
-        - schemanname: ${{ inputs.schema-name }}
-          envname:  ${{ inputs.envname || 'dev' }} 
-          db-instance-name: ${{ inputs.db-instance-name || 'Thayer_Development' }}
-          db-instance-id: ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }}
-          sqlclcmd: ${{ needs.getcompartmentanddbinstid.outputs.LBSQLCLCMD }}
+          schemanname:  ${{ fromJSON(inputs.schema-name) }}
+         
         
         
         
     uses: './.github/workflows/ExecuteLBSQLCmd.yml'
     with:
-      envname: '${{ matrix.envname }}'
-      db-instance-name: '${{ matrix.db-instance-name }}'
-      db-instance-id: '${{ matrix.db-instance-id }}'
-      schemaname: '${{ matrix.schenmaname }}'
-      sqlcl-cmd: '${{ matrix.sqlclcmd }}'
+       envname:  ${{ inputs.envname || 'dev' }} 
+       db-instance-name: ${{ inputs.db-instance-name || 'Thayer_Development' }}
+       db-instance-id: ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }}
+       sqlclcmd: ${{ needs.getcompartmentanddbinstid.outputs.LBSQLCLCMD }}
+       schemaname: '${{ matrix.schenmaname }}'
+       
       
     secrets: inherit
             
