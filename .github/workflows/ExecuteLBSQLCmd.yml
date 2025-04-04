@@ -59,6 +59,7 @@ jobs:
      #    || github.ref_name == 'dev'  && 'dev'
       #   || 'dev'
      # }}
+    runs-on: self-hosted
     environment: ${{ inputs.envname }}
     needs: getschemavault
     name: Integrate and execute LB through SQLcl 
