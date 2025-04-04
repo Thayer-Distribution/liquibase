@@ -157,7 +157,7 @@ jobs:
        envname:  ${{ inputs.envname || 'dev' }} 
        db-instance-name: ${{ inputs.db-instance-name || 'Thayer_Development' }}
        db-instance-id: ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }}
-       sqlclcmd: ${{ needs.getcompartmentanddbinstid.outputs.LBSQLCLCMD }}
+       sqlcl-cmd: ${{ needs.getcompartmentanddbinstid.outputs.LBSQLCLCMD }}
        schemaname: '${{ matrix.schenmaname }}'
        
       
