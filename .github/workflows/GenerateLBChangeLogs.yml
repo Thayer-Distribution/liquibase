@@ -147,7 +147,7 @@ jobs:
     needs: getcompartmentanddbinstid
     strategy:
      matrix:
-          schemanname:  ${{ fromJSON(inputs.schema-name) }}
+          schemanname:  ${{ inputs.schema-name }}
          
         
         
