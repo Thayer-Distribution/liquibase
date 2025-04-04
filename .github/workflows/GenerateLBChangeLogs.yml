@@ -46,7 +46,7 @@ jobs:
           compartment-name: ${{  inputs.compartment-name || 'thayer_dev' }}
    secrets: inherit
    
-  generatelbchangelog:
+  preparelbchangelog:
     needs: getcompartmentanddbinstid
     runs-on: self-hosted
     environment: ${{ inputs.envname || 'dev' }} 
@@ -141,21 +141,30 @@ jobs:
               mkdir -p ${i}
             done
 
-      - name: 'generate changelogs for one or more schemas'
-        working-directory: ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
+          
+  generatelbchangelogs:
+    needs: getcompartmentanddbinstid
+    strategy:
+     matrix:
+      include: 
+        - schemanname: ${{ inputs.schema-name }}
+          envname:  ${{ inputs.envname || 'dev' }} 
+          db-instance-name: ${{ inputs.db-instance-name || 'Thayer_Development' }}
+          db-instance-id: ${{ needs.getcompartmentanddbinstid.outputs.dbinstanceocid }}
+          sqlclcmd: ${{ env.LBSQLCLCMD }}
+        
+        
+        
+    uses: './.github/workflows/ExecuteLBSQLCmd.yml'
+    with:
+      envname: '${{ matrix.envname }}'
+      db-instance-name: '${{ matrix.db-instance-name }}'
+      db-instance-id: '${{ matrix.db-instance-id }}'
+      schemaname: '${{ matrix.schenmaname }}'
+      sqlcl-cmd: '${{ matrix.sqlclcmd }}'
       
-        run: |    
-         echo "${{ secrets.SQLCL_HOME }}/bin" >> $GITHUB_PATH
-         IFS="," read -a schemaslist <<< ${{ env.SCHEMASLIST }}
-            for i in "${schemaslist[@]}"; do
-              echo "Value: ${i}"
-              cd ${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}/lbfiles
-              cd ${i}
-              
-              echo "ALTER session set current_schema=${i}; ${{ env.LBSQLCLCMD}} " | ${{ secrets.SQLCL_HOME }}/bin/sql ${{ secrets[env.DB_USER] }}/${{ secrets[env.DB_PASSWD] }}@${{ secrets[env.DB_TNSNAME] }}?TNS_ADMIN=${{ secrets.DB_ENV_BASEDIR }}/${{ env.DB_ENV }}/dbinstances/${{ env.DB_INST }}
-            done
-
-         
+    secrets: inherit
+            
         
          
          
