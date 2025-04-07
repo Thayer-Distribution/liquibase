@@ -35,7 +35,7 @@ on:
        description: 'database storage size in gb '
        required: true
        type: number
-       default: 20
+       default: 1024
       compartment-name:
        description: 'compartment name to create the DB '
        required: true
