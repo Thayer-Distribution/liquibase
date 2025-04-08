@@ -67,6 +67,6 @@ jobs:
         id: invokeocioutput
         run: |
          echo "output from the oci cmd"
-         echo ${{ jobs.invokeoci.outputs.output }} | jq .
+         echo ${{ needs.invokeocicmd.outputs.output }} | jq .
         
      
