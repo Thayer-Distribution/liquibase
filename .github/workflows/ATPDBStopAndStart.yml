@@ -30,7 +30,7 @@ on:
         options:
         - 'start'
         - 'stop'
-        - 'terminate'
+        #- 'terminate'
         default: start
       
   
