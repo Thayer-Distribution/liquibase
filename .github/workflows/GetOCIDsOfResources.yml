@@ -124,7 +124,7 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: getsourcedbid
         with:
-          command: ' oci db autonomous-database list --compartment-id ${{ env.DB_COMPARTMENTID }} --display-name ${{ env.DB_INST }}'
+          command: ' oci db autonomous-database list --compartment-id ${{ env.DB_COMPARTMENTID }} --display-name ${{ env.DB_INST }} --lifecycle-state-not-equal-to "TERMINATED" '
           #query: "data[?'display-name'=='${{ env.DB_INST }}'].id"
           silent: false
         
