@@ -1,4 +1,4 @@
-name: "GetOCIDOfResources"
+name: "GenericWFForAnyOCICommand"
 on:
 #  schedule:
 #    - cron: '*/5 * * * *'
@@ -8,7 +8,7 @@ on:
  # pull_request:
  #   branches: [ "main" ]
 
-  # Allows you to run this workflow manually from the Actions tab
+  
   workflow_call:
    inputs:
       envname:
@@ -16,62 +16,23 @@ on:
         required: true
         type: string
         default: dev
-      db-instance-name:
-        description: 'source database instance name'
-        required: false
+      ocicmdtoexecute:
+        description: "Complete OCI command to execute"
+        required: true
         type: string
-        default: Thayer_Development
-      compartment-name:
-       description: 'compartment name to retrieve the DB instance details '
-       required: true
-       type: string
-       default: thayer_dev
-      db-subnet-name:
-       description: 'DB Instance VCN subnet name '
-       required: false
-       type: string
-       default: ""
-      nsg-name:
-       description: 'Get NSG ID based on nsg id  '
-       required: false
-       type: string
-       default: ""
-      nsg-compartmentid:
-       description: 'Get NSG compartment ID  '
-       required: false
-       type: string
-       default: ""
-      secret-name:
-       description: 'Vault secret name  '
-       required: false
-       type: string
-       default: ""
+        default: dev
+      
    outputs:
-      compartmentocid:
-        description: "return compartment ocid"
-        value: ${{ jobs.getcompartmentanddbinstanceid.outputs.compartmentocid }}
-      dbinstanceocid:
-        description: "return db instance ocid"
-        value: ${{ jobs.getcompartmentanddbinstanceid.outputs.dbinstanceocid }}
-      dbname:
-       description: "return db instance name"
-       value: ${{ jobs.getcompartmentanddbinstanceid.outputs.dbname }}
-      nsgid:
-       description: "return nsg id"
-       value: ${{ jobs.getcompartmentanddbinstanceid.outputs.nsgid }}
-      subnetid:
-       description: "return subnet id"
-       value: ${{ jobs.getcompartmentanddbinstanceid.outputs.subnetid }}
-      secretid:
-       description: "return secret id"
-       value: ${{ jobs.getcompartmentanddbinstanceid.outputs.secretid }}
-       
+      ocicmdoutput:
+        description: "return output of oci command"
+        value: ${{ jobs.ExecuteOCICMD.outputs.ocicmdoutput }}
+      
      
 jobs:
-  getcompartmentanddbinstanceid:
+  executeocicmd:
     runs-on: self-hosted
     environment: ${{ inputs.envname || 'dev' }} 
-    name: CompartmentAndDBInstIDRetrieval
+    name: ExecuteOCICMD
     env:
       OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
       OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
@@ -82,149 +43,42 @@ jobs:
       #RUNNER_TOOL_CACHE: /thayer/envs/dev
       #AGENT_TOOLSDIRECTORY: /thayer/envs/dev
       DB_ENV: ${{ inputs.envname || 'dev' }}
-      DB_INST: ${{ inputs.db-instance-name || 'Thayer_Development' }}
       
-      OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
-      NSG_NAME: ${{ inputs.nsg-name || 'thayerdev_nsg' }}
-      NSG_CMPID: ${{ inputs.nsg-compartmentid || 'OCI_USEast_Thayer_Core_Infra' }}
-      SUBNET_NAME: ${{ inputs.db-subnet-name || 'thayer_dev_net' }}
-      SECRET_NAME: ${{ inputs.secret-name || 'thayer_dev_net' }}
-     
+      
+      OCI_CMD_CONTENTS: ${{  inputs.ocicmdtoexecute || 'oci iam list' }}
+      
     steps:
       - name: Workspace Location
         run: echo $GITHUB_WORKSPACE
       
-      - name: Get Compartment ID
-        if: "${{ inputs.compartment-name != '' }}"
+      - name: Execute OCI CMD
+        if: "${{ inputs.ocicmdtoexecute != '' }}"
         uses: oracle-actions/run-oci-cli-command@v1.3.2
-        id: getcompartmentid
+        id: executeocicmd
         with:
-          command: ' oci  iam compartment  list --name "${{ env.OCI_COMPARTMENT_NAME }}"'
+          command: ' ${{ env.OCI_CMD_CONTENTS }} '
           #query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
           silent: false
       - name: Add Compartment OCID To the Env 
         if: "${{ inputs.compartment-name != '' }}"
-        id: compartmentocidoutput
+        id: executeocicmdoutput
         env:
-         cmpid: ${{ steps.getcompartmentid.outputs.output }}
+         cmpid: ${{ steps.executeocicmd.outputs.output }}
         run: |
           echo "test****"$cmpid
           echo "cmpid=$cmpid" >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT
         
-          echo "${{ steps.getcompartmentid.outputs.output }} | jq ."
-          retid=$(echo ${{ steps.getcompartmentid.outputs.output }} | jq .data[0].id)
+          echo "${{ steps.executeocicmd.outputs.output }} | jq ."
+          retid=$(echo ${{ steps.executeocicmd.outputs.output }} | jq .)
          
           echo "retid"$retid
-          echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_ENV
-          echo "DB_COMPARTMENTID=$(echo $retid)" >> $GITHUB_OUTPUT
-          echo "DB INSTANCE NAME****" ${{ inputs.db-instance-name }}
-      - name: Get Source DB ID 
-        if: "${{ env.DB_INST != '' }}"
-        uses: oracle-actions/run-oci-cli-command@v1.3.2
-        id: getsourcedbid
-        with:
-          command: ' oci db autonomous-database list --compartment-id ${{ env.DB_COMPARTMENTID }} --display-name ${{ env.DB_INST }}'
-          #query: "data[?'display-name'=='${{ env.DB_INST }}'].id"
-          silent: false
-        
-      - name: Add Source DB OCID To the Env 
-        id: getsourcedbidoutput
-        if: "${{ env.DB_INST != '' }}"
-        env:
-         srcid: ${{ steps.getsourcedbid.outputs.output }}
-        run: |
-         
-          echo "srcid***"$srcid 
-          #cat $GITHUB_OUTPUT
-          echo ${{ steps.getsourcedbid.outputs.output }} | jq .data[0].id
-          retid=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq .data[0].id)
-          
-          echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_ENV
-          echo "DB_INST_ID=$(echo $retid)" >> $GITHUB_OUTPUT
-          dbname=$(echo ${{ steps.getsourcedbid.outputs.output }} | jq '.data[0]."db-name"')
-          echo "DB_NAME=$(echo $dbname)" >> $GITHUB_ENV
-          echo "DB_NAME=$(echo $dbname)" >> $GITHUB_OUTPUT
-          cat $GITHUB_ENV
-      - name: Get SUBNET ID 
-        if: "${{ inputs.db-subnet-name != '' }}"
-        uses: oracle-actions/run-oci-cli-command@v1.3.2
-        id: getsubnetid
-        with:
-          command: ' oci  network subnet  list --compartment-id ${{ env.DB_COMPARTMENTID }}  --display-name ${{ env.SUBNET_NAME }}'
-          #query: "data[?name=='${{ env.NAME }}'].id"
-          silent: false
-      - name: Add SUBNET OCID To the Env 
-        id: getsubnetoutput
-        if: "${{ inputs.db-subnet-name != '' }}"
-        env:
-         subnetid: ${{ steps.getsubnetid.outputs.output }}
-        run: |
-         
-          echo "subnet***"$subnetid 
-          #cat $GITHUB_OUTPUT
-          echo ${{ steps.getsubnetid.outputs.output }} | jq .data[0].id
-          retid=$(echo ${{ steps.getsubnetid.outputs.output }} | jq .data[0].id)
-          
-          echo "SUBNET_ID=$(echo $retid)" >> $GITHUB_ENV
-          echo "SUBNET_ID=$(echo $retid)" >> $GITHUB_OUTPUT
-          
-          cat $GITHUB_ENV
-      - name: Get NSG ID 
-        if: "${{ inputs.nsg-name != '' }}"
-        uses: oracle-actions/run-oci-cli-command@v1.3.2
-        id: getnsgid
-        with:
-          command: ' oci  network nsg  list --compartment-id ${{ env.NSG_CMPID }}  --display-name ${{ env.NSG_NAME }} '
-          #query: "data[?name=='${{ env.NSG_NAME }}'].id"
-          silent: false
-      - name: Add NSG OCID To the Env 
-        id: getnsgoutput
-        if: "${{ inputs.nsg-name != '' }}"
-        env:
-         nsgid: ${{ steps.getnsgid.outputs.output }}
-        run: |
-         
-          echo "nsg***"$nsgid 
-          #cat $GITHUB_OUTPUT
-          echo ${{ steps.getnsgid.outputs.output }} | jq .data[0].id
-          retid=$(echo ${{ steps.getnsgid.outputs.output }} | jq .data[0].id)
-          
-          echo "NSG_ID=$(echo $retid)" >> $GITHUB_ENV
-          echo "NSG_ID=$(echo $retid)" >> $GITHUB_OUTPUT
-          
-          cat $GITHUB_OUTPUT
-      - name: Get Secret ID 
-        if: "${{ inputs.secret-name != '' }}"
-        uses: oracle-actions/run-oci-cli-command@v1.3.2
-        id: getsecretid
-        with:
-          command: ' oci vault secret list --compartment-id ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}  --name "${{ env.SECRET_NAME }}" '
-          #query: "data[?name=='${{ env.NSG_NAME }}'].id"
-          silent: false
-      - name: Add Secret OCID To the Env 
-        id: getsecretoutput
-        if: "${{ inputs.secret-name != '' }}"
-        env:
-         secretid: ${{ steps.getsecretid.outputs.output }}
-        run: |
-         
-          echo "secretid***"$secretid 
-          #cat $GITHUB_OUTPUT
-          echo ${{ steps.getsecretid.outputs.output }} | jq .data[0].id
-          retid=$(echo ${{ steps.getsecretid.outputs.output }} | jq .data[0].id)
-          
-          echo "SECRET_ID=$(echo $retid)" >> $GITHUB_ENV
-          echo "SECRET_ID=$(echo $retid)" >> $GITHUB_OUTPUT
-          
-          cat $GITHUB_OUTPUT
+          echo "OCICMDOUTPUT=$(echo $retid)" >> $GITHUB_ENV
+          echo "OCICMDOUTPUT=$(echo $retid)" >> $GITHUB_OUTPUT
+       
     outputs:
-      compartmentocid: ${{ steps.compartmentocidoutput.outputs.DB_COMPARTMENTID }}
-      dbinstanceocid: ${{ steps.getsourcedbidoutput.outputs.DB_INST_ID }}
-      dbname: ${{ steps.getsourcedbidoutput.outputs.DB_NAME }}
-      nsgid: ${{ steps.getnsgoutput.outputs.NSG_ID }}
-      subnetid: ${{ steps.getsubnetoutput.outputs.SUBNET_ID }}
-      secretid: ${{ steps.getsecretoutput.outputs.SECRET_ID }}
+      ocicmdoutput: ${{ steps.executeocicmdoutput.outputs.OCICMDOUTPUT }}
+     
       
       
      
