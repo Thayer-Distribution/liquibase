@@ -47,39 +47,25 @@ jobs:
    secrets: inherit
  
   invokeocicmd:
-    runs-on: self-hosted
-    needs: [ getcmpanddbinstid]
-    environment:  ${{
-         github.ref_name == 'master' && 'dev'
-         || github.ref_name == 'dev'    && 'dev'
-         || 'dev'
-      }}
-    name: OCICMDINVOKE
-    env:
-      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
-      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
-      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
-      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
-      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
-      OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
-      #OCI_COMPARTMENT_ID: ${{ format('DB_{0}_USER', inputs.db-instance-name || 'thayeratp' ) }}
-      OCI_COMPARTMENT_NAME: ${{  inputs.compartment-name || 'thayer_dev' }}
-      
-   
-    steps:
-      
-     
-   
-      - name: Invoke OCI CMD the DB
-        uses: ./.github/workflows/GenericOCICommandExecution.yml
-        id: invokeoci
-        with:
+    needs: getcmpanddbinstid
+    
+    uses: ./.github/workflows/GenericOCICommandExecution.yml
+    with:
           envname: ${{inputs.envname }}
           ocicmdtoexecute: "oci db autonomous-database ${{ inputs.dbaction }}   --autonomous-database-id ${{ needs.getcmpanddbinstid.outputs.dbinstanceocid }} "
-          silent: false
+    secrets: inherit      
+   
+      
+  handleocioutput: 
+    needs: [ getcmpanddbinstid, invokeocicmd ]
+    runs-on: self-hosted
+    environment: ${{ inputs.envname }}
+    name: handleocioutput
+    steps:
+   
       - name: HandleOutputOfOCICmd
         id: invokeocioutput
         run: |
-         echo ${{ steps.invokeoci.outputs.output }} | jq .
+         echo ${{ jobs.invokeoci.outputs.output }} | jq .
         
      
