@@ -59,7 +59,7 @@ jobs:
           command: ' ${{ env.OCI_CMD_CONTENTS }} '
           #query: "data[?name=='${{ env.OCI_COMPARTMENT_NAME }}'].id"
           silent: false
-      - name: Add Compartment OCID To the Env 
+      - name: Add OCI CMD  To the Output 
         if: "${{ inputs.compartment-name != '' }}"
         id: executeocicmdoutput
         env:
