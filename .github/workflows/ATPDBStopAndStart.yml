@@ -19,10 +19,10 @@ on:
        type: string
        default: thayer_dev
       db-instance-name:
-       description: 'db instance to stop or start '
+       description: 'db instance to stop, start or terminate'
        required: true
        type: string
-       default: Thayer_Development
+       default: dev2
       dbaction:
         type: choice
         description: 'db action '
@@ -31,6 +31,7 @@ on:
         - 'start'
         - 'stop'
         - 'terminate'
+        default: start
       
   
 jobs:
