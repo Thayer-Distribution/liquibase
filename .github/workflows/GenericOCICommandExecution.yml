@@ -69,12 +69,11 @@ jobs:
           echo "cmpid=$cmpid" >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT
         
-          echo "${{ steps.executeocicmd.outputs.output }} | jq ."
-          retid=$(echo ${{ steps.executeocicmd.outputs.output }} | jq .)
+          
          
           echo "retid"$retid
-          echo "OCICMDOUTPUT=$(echo $retid)" >> $GITHUB_ENV
-          echo "OCICMDOUTPUT=$(echo $retid)" >> $GITHUB_OUTPUT
+          echo "OCICMDOUTPUT=$(echo $cmpid)" >> $GITHUB_ENV
+          echo "OCICMDOUTPUT=$(echo $cmpid)" >> $GITHUB_OUTPUT
        
     outputs:
       ocicmdoutput: ${{ steps.executeocicmdoutput.outputs.OCICMDOUTPUT }}
