@@ -14,12 +14,12 @@ on:
         - 'uat'
       
       compartment-name:
-       description: 'compartment name to create the DB '
+       description: 'compartment name of the DB '
        required: true
        type: string
        default: thayer_dev
       db-instance-name:
-       description: 'db instance to clone from '
+       description: 'db instance to stop or start '
        required: true
        type: string
        default: Thayer_Development
