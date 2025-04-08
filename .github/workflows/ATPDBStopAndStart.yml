@@ -59,7 +59,7 @@ jobs:
   handleocioutput: 
     needs: [ getcmpanddbinstid, invokeocicmd ]
     runs-on: self-hosted
-    environment: ${{ inputs.envname }}
+    
     name: handleocioutput
     steps:
    
